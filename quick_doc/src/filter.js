@@ -25,6 +25,7 @@ import Input from '@material-ui/core/Input';
 import {FormControl, CardHeader, CardContent, CardMedia} from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
 
 
 
@@ -113,24 +114,50 @@ const MenuProps = {
   },
 };
 
+const doctorCardStyles = makeStyles(theme => ({
+  grid: {
+    marginLeft: 250,
+    marginTop: 75,
+    paddingLeft: 60,
+  },
+  card:{
+    display:"flex",
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    width: 450,
+    height: 250,
+    paddingTop: 20,
+  },
+  content:{
+    display:"flex",
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+  }
+}));
+
 const DoctorCards = ({doctors, settingdoctor, pagestate}) => {
+    const classes = doctorCardStyles();
     return(
-        <div>       
+        <Grid container spacing={2} className={classes.grid}>       
         {doctors.map(doctor =>
-          (<Card className={useStyles.card}>
-            <h1><strong>{doctor.profile.first_name + " " + doctor.profile.last_name}</strong></h1>
-            <CardMedia><img src={doctor.profile.image_url}></img></CardMedia>
-            <CardContent>Located in {doctor.practices[0].visit_address.city + ", " + doctor.practices[0].visit_address.state}
-            <Button size="large" onClick={function(event){settingdoctor.setdoc(doctor);pagestate.setpage(3)}}>View Doctor Bio</Button>
-            </CardContent>
-          </Card>))}
-       </div>
+          (<Grid item xs={6}>
+            <Card className={classes.card}>
+              <h1><strong>{doctor.profile.first_name + " " + doctor.profile.last_name}</strong></h1>
+              <CardMedia><img src={doctor.profile.image_url}></img></CardMedia>
+              <CardContent className={classes.content}>Located in {doctor.practices[0].visit_address.city + ", " + doctor.practices[0].visit_address.state}
+                <Button variant="contained" color="primary" size="large" onClick={function(event){settingdoctor.setdoc(doctor);pagestate.setpage(3)}}>View Doctor Bio</Button>
+              </CardContent>
+            </Card>
+        </Grid>))}
+       </Grid>
     )
 }
 
 export const FilterMenu =({pagestate,doctors,settingdoctor})=>{
 
-    const classes = useStyles();
+  const classes = useStyles();
   const theme = useTheme();
   const names = [
     'Oliver Hansen',
@@ -301,7 +328,7 @@ const doctorSelector = () =>{
                     </Select>
                 </FormControl>
             </ListItem>
-
+            <Divider/>
             <ListItem key='insurance'>
               {/* <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon> */}
               {/* <ListItemText primary={text} /> */}
@@ -334,7 +361,7 @@ const doctorSelector = () =>{
           [classes.contentShift]: open,
         })}
       >
-          <DoctorCards doctors = {doctorSelector()} settingdoctor = {settingdoctor} pagestate ={pagestate} />
+          <DoctorCards doctors = {doctorSelector()} settingdoctor = {settingdoctor} pagestate ={pagestate} cardStyle={classes.card} />
       </main>
     </div>
   );
