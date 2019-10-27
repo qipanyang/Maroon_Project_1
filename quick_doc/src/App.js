@@ -32,6 +32,7 @@ import { sizing, spacing, positions } from '@material-ui/system';
 import Card from '@material-ui/core/Card';
 
 import Result from './results.js';
+import {FilterMenu} from './filter.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCPlCnToFlfovuDUaAGesBUNLZw8DAxTnQ",
@@ -184,14 +185,26 @@ const Pageone = ({pagestate, coordinatestate}) => {
 }
 
 
+
+const DocList = ({doctors}) => {
+  return(
+    <div>
+    {doctors.map(
+      doctor => (<div> {doctor.profile.first_name} {doctor.profile.last_name}
+        </div>
+
+    )
+  )}
+  </div>
+  )
+}
+
 const App =() => {
 
   const style ={
     marginTop: 40
   }
-
   const classes = pageOneStyles();
-
   const [page, setpage] = React.useState(1)
   const [coordinates, setcoordinates] = React.useState("")
   const [json, setjson] = React.useState({meta: {}, data: []});
@@ -209,7 +222,6 @@ const App =() => {
     fetchjson();
   }, [])
 
-
   if (page === 1){
     return (
       <Container>
@@ -225,10 +237,10 @@ const App =() => {
   else if (page == 2) {
     return (
       <Container>
-        <Title align="center" style = {style}>
+        {/* <Title align="center" style = {style}>
           QuickDoc
-        </Title>
-        <Pagetwo pagestate = {{page,setpage}} doctors={json.data} settingdoctor = {{doc,setdoc}}/>
+        </Title> */}
+        <FilterMenu pagestate = {{page,setpage}} doctors={json.data} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
   }
@@ -242,6 +254,7 @@ const App =() => {
       </Container>
     );
   }
+  
   
 }
 /*
