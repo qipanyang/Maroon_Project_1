@@ -32,6 +32,7 @@ import { sizing, spacing, positions } from '@material-ui/system';
 import Card from '@material-ui/core/Card';
 
 import Result from './results.js';
+import {FilterMenu} from './filter.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCPlCnToFlfovuDUaAGesBUNLZw8DAxTnQ",
@@ -85,7 +86,7 @@ const useStyles = makeStyles(theme => ({
   },
   card: {
     padding: 10,
-    width: "30%",
+    maxWidth: 345,
     marginTop: 20,
   },
   formControl: {
@@ -114,7 +115,7 @@ const Pagetwo = ({pagestate,doctors,settingdoctor}) => {
           <h1><strong>{doctor.profile.first_name + " " + doctor.profile.last_name}</strong></h1>
           <CardMedia><img src={doctor.profile.image_url}></img></CardMedia>
           <CardContent>Located in {doctor.practices[0].visit_address.city + ", " + doctor.practices[0].visit_address.state}
-          <Button size="large" onClick={function(event){settingdoctor.setdoc(doctor.profile);pagestate.setpage(3)}}>View Doctor Bio</Button>
+          <Button size="large" onClick={function(event){settingdoctor.setdoc(doctor);pagestate.setpage(3)}}>View Doctor Bio</Button>
           </CardContent>
         </Card>))}
      </div>
@@ -124,7 +125,12 @@ const Pagetwo = ({pagestate,doctors,settingdoctor}) => {
 const PageThree = ({pagestate,doctors,settingdoctor}) => {
   return (
     <div>
-    <p>{settingdoctor.doc.bio}</p>
+    <h3><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
+    <h1>Insurance Taken:</h1>
+    {settingdoctor.doc.insurances.map(insurance =>
+      <li>{insurance.insurance_provider.name}</li>
+      )}
+    <p>{settingdoctor.doc.profile.bio}</p>
     <Button align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
     </div>
   )
@@ -179,19 +185,32 @@ const Pageone = ({pagestate, coordinatestate}) => {
 }
 
 
+
+const DocList = ({doctors}) => {
+  return(
+    <div>
+    {doctors.map(
+      doctor => (<div> {doctor.profile.first_name} {doctor.profile.last_name}
+        </div>
+
+    )
+  )}
+  </div>
+  )
+}
+
 const App =() => {
 
   const style ={
     marginTop: 40
   }
-
   const classes = pageOneStyles();
-
   const [page, setpage] = React.useState(1)
   const [coordinates, setcoordinates] = React.useState("")
   const [json, setjson] = React.useState({meta: {}, data: []});
   const [doc,setdoc] = React.useState('');
-  const url = 'apiData/exampleData.json';
+  const url = 'apiData/exampleData.json'
+  //const url = 'https://api.betterdoctor.com/2016-03-01/doctors?location='+ coordinates.lat + coordinates.lng + '100&skip=2&limit=10&user_key=e98def16c263c71592c3c2f74e24097a';
 
   useEffect(() => {
     const fetchjson = async () => {
@@ -202,7 +221,6 @@ const App =() => {
     }
     fetchjson();
   }, [])
-
 
   if (page === 1){
     return (
@@ -219,10 +237,10 @@ const App =() => {
   else if (page == 2) {
     return (
       <Container>
-        <Title align="center" style = {style}>
+        {/* <Title align="center" style = {style}>
           QuickDoc
-        </Title>
-        <Pagetwo pagestate = {{page,setpage}} doctors={json.data} settingdoctor = {{doc,setdoc}}/>
+        </Title> */}
+        <FilterMenu pagestate = {{page,setpage}} doctors={json.data} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
   }
@@ -236,6 +254,7 @@ const App =() => {
       </Container>
     );
   }
+  
   
 }
 /*
