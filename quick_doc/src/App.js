@@ -108,6 +108,12 @@ const PageThree = ({pagestate,settingdoctor}) => {
   var insuranceSet = new Set();
   settingdoctor.doc.insurances.map(insurance=>insuranceSet.add(insurance.insurance_plan.name))
   return (
+    <Container>
+    <AppBar>
+          <Title align="center" >
+            QuickDoc
+          </Title>
+    </AppBar>
     <div>
     <h3><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
     <h1>Insurance Taken:</h1>
@@ -117,6 +123,7 @@ const PageThree = ({pagestate,settingdoctor}) => {
     <p>{settingdoctor.doc.profile.bio}</p>
     <Button align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
     </div>
+    </Container>
   )
 }
 
@@ -214,12 +221,8 @@ const App =() => {
   }
   else if (page == 3) {
     return (
-      <Container>
-        <Title align="center" style = {style}>
-          QuickDoc
-        </Title>
+        
         <PageThree pagestate={{page,setpage}} doctors={json.data} settingdoctor = {{doc,setdoc}}/>
-      </Container>
     );
   }
   
