@@ -11,24 +11,13 @@ import MobileStepper from '@material-ui/core/MobileStepper';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import TextField from '@material-ui/core/TextField';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem'
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
 import AppBar from '@material-ui/core/AppBar';
+import Divider from '@material-ui/core/Divider';
 
 import {FormControl, CardHeader, CardContent, CardMedia} from '@material-ui/core';
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Box from '@material-ui/core/Box';
 import { sizing, spacing, positions } from '@material-ui/system';
-import Card from '@material-ui/core/Card';
 
 import {FilterMenu} from './filter.js';
 
@@ -104,18 +93,35 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const pageThreeStyles = makeStyles(theme => ({
+ bio:{
+   marginTop: 20,
+   marginBottom: 20,
+ },
+ button:{
+   marginTop: 20,
+ }
+}));
+
 const PageThree = ({pagestate,settingdoctor}) => {
+  const classes = pageThreeStyles();
   var insuranceSet = new Set();
   settingdoctor.doc.insurances.map(insurance=>insuranceSet.add(insurance.insurance_plan.name))
   return (
     <div>
     <h3><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
+    
+    <p className={classes.bio}>
+      <Divider/>
+      {settingdoctor.doc.profile.bio}
+      <Divider/>
+    </p>
+    
     <h1>Insurance Taken:</h1>
     {Array.from(insuranceSet).map(insurance =>
       <li>{insurance}</li>
       )}
-    <p>{settingdoctor.doc.profile.bio}</p>
-    <Button align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
+    <Button className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
     </div>
   )
 }
