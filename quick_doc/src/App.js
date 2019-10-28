@@ -106,10 +106,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Pagetwo = ({pagestate,jsonstate,settingdoctor}) => {
-  //const doctors = jsonstate.json
+  const doctors = jsonstate.json.then((response) => response)
+  
   return (
     <div>
-      {jsonstate.json.map((doctor) =>
+      {doctors.map((doctor) =>
         (<Card className={useStyles.card}>
           <h1><strong>{doctor.profile.first_name + " " + doctor.profile.last_name}</strong></h1>
           <CardMedia><img src={doctor.profile.image_url}></img></CardMedia>
