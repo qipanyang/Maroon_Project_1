@@ -19,14 +19,10 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import Input from '@material-ui/core/Input';
-import {FormControl, CardHeader, CardContent, CardMedia} from '@material-ui/core';
-import Card from '@material-ui/core/Card';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-
 
 
 const drawerWidth = 340;
@@ -114,50 +110,11 @@ const MenuProps = {
   },
 };
 
-const doctorCardStyles = makeStyles(theme => ({
-  grid: {
-    marginLeft: 250,
-    marginTop: 75,
-    paddingLeft: 60,
-  },
-  card:{
-    display:"flex",
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    width: 450,
-    height: 250,
-    paddingTop: 20,
-  },
-  content:{
-    display:"flex",
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-  }
-}));
 
-const DoctorCards = ({doctors, settingdoctor, pagestate}) => {
-    const classes = doctorCardStyles();
-    return(
-        <Grid container spacing={2} className={classes.grid}>       
-        {doctors.map(doctor =>
-          (<Grid item xs={6}>
-            <Card className={classes.card}>
-              <h1><strong>{doctor.profile.first_name + " " + doctor.profile.last_name}</strong></h1>
-              <CardMedia><img src={doctor.profile.image_url}></img></CardMedia>
-              <CardContent className={classes.content}>Located in {doctor.practices[0].visit_address.city + ", " + doctor.practices[0].visit_address.state}
-                <Button variant="contained" color="primary" size="large" onClick={function(event){settingdoctor.setdoc(doctor);pagestate.setpage(3)}}>View Doctor Bio</Button>
-              </CardContent>
-            </Card>
-        </Grid>))}
-       </Grid>
-    )
-}
 
-export const FilterMenu =({pagestate,doctors,settingdoctor})=>{
+export const FilterMenu =({doctors})=>{
 
-  const classes = useStyles();
+    const classes = useStyles();
   const theme = useTheme();
   const names = [
     'Oliver Hansen',
@@ -212,6 +169,8 @@ export const FilterMenu =({pagestate,doctors,settingdoctor})=>{
 }
 const getInsuList =() =>{
     var insurances= doctors.map(doctor=>(doctor.insurances));
+
+    var insurances_providers = [insurances.length];
     var insuranceSet = new Set();
     for (var i=0; i<insurances.length;i++){
         insurances[i].map(insurance=>(insuranceSet.add(insurance.insurance_plan.name)));
@@ -219,51 +178,18 @@ const getInsuList =() =>{
     
     return Array.from(insuranceSet)
 }
-const specialties_list = getSpecList()
+const specialist_list = getSpecList()
 const insurance_list = getInsuList()
-console.log(specialties_list)
+console.log(specialist_list)
 console.log(insurance_list)
+// console.log(specialist_list[0][1])
 
-const matchInsu = (doctor) =>{
-    var flag = 0
-    doctor.insurances.map(insurance=>(insu.includes(insurance.insurance_plan.name) ? flag = 1 : false))
-    if (flag===0){
-        return false
-    }
-    else{
-        return true
-    }
-}
-const matchSpec = (doctor) =>{
-    var flag = 0
-    doctor.specialties.map(specialty=>(spec.includes(specialty.name) ? flag = 1 : false))
-    if (flag===0){
-        return false
-    }
-    else{
-        return true
-    }
-    
-}
-const doctorSelector = () =>{
-    if (insu.length != 0 && spec.length != 0)
-    {
-        return doctors.filter(doctor=>matchInsu(doctor)).filter(doctor=>matchSpec(doctor));
-    }
-    else if (insu.length != 0)
-    {
-        return doctors.filter(doctor=>matchInsu(doctor));
-    }
-    else if (spec.length != 0)
-    {
-        return doctors.filter(doctor=>matchSpec(doctor));
-    }
-    else
-    {
-        return doctors;
-    }
-    
-}
+//test
+const [personName, setPersonName] = React.useState([]);
+
+  const handleChange = event => {
+    setPersonName(event.target.value);
+  };
 
   return (
     <div className={classes.root}>
@@ -305,12 +231,32 @@ const doctorSelector = () =>{
         </div>
         <Divider />
         <List>
+            {/* <ListItem key='name'>
+            <FormControl className={classes.formControl}>
+        <InputLabel htmlFor="select-multiple-checkbox">Tag</InputLabel>
+        <Select
+          multiple
+          value={personName}
+          onChange={handleChange}
+          input={<Input id="select-multiple-checkbox" />}
+          renderValue={selected => selected.join(', ')}
+          MenuProps={MenuProps}
+        >
+          {names.map(name => (
+            <MenuItem key={name} value={name}>
+              <Checkbox checked={personName.indexOf(name) > -1} />
+              <ListItemText primary={name} />
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      </ListItem> */}
 
-            <ListItem key='specialties'>
+            <ListItem key='specialist'>
               {/* <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon> */}
               {/* <ListItemText primary={text} /> */}
                 <FormControl className={classes.formControl}>
-                    <InputLabel htmlFor="select-multiple-checkbox">specialties</InputLabel>
+                    <InputLabel htmlFor="select-multiple-checkbox">Specialist</InputLabel>
                     <Select
                         multiple
                         value={spec}
@@ -319,34 +265,32 @@ const doctorSelector = () =>{
                         renderValue={selected => selected.join(', ')}
                         MenuProps={MenuProps}
                         >
-                    {specialties_list.map(specialties => (
-                    <MenuItem key={specialties} value={specialties}>
-                        <Checkbox checked={spec.indexOf(specialties) > -1} />
-                        <ListItemText primary={specialties} />
+                    {specialist_list.map(specialist => (
+                    <MenuItem key={specialist} value={specialist}>
+                        <Checkbox checked={spec.indexOf(specialist) > -1} />
+                        <ListItemText primary={specialist} />
                     </MenuItem>
                     ))}
                     </Select>
                 </FormControl>
             </ListItem>
-            <Divider/>
+
             <ListItem key='insurance'>
               {/* <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon> */}
               {/* <ListItemText primary={text} /> */}
 
                 <FormControl className={classes.formControl}>
-                    <InputLabel htmlFor="select-multiple-checkbox">Insurance</InputLabel>
+                    <InputLabel htmlFor="select-multiple">insurance</InputLabel>
                     <Select
                         multiple
                         value={insu}
                         onChange={handleInsuChange}
-                        input={<Input id="select-multiple-checkbox" />}
-                        renderValue={selected => selected.join(', ')}
+                        input={<Input id="select-multiple" />}
                         MenuProps={MenuProps}
                         >
                     {insurance_list.map(insurance => (
                     <MenuItem key={insurance} value={insurance} >
-                        <Checkbox checked={insu.indexOf(insurance) > -1} />
-                        <ListItemText primary={insurance} />                    
+                        {insurance}
                     </MenuItem>
                     ))}
                     </Select>
@@ -356,13 +300,27 @@ const doctorSelector = () =>{
         </List>
         <Divider />
       </Drawer>
-      <main
+      {/* <main
         className={clsx(classes.content, {
           [classes.contentShift]: open,
         })}
       >
-          <DoctorCards doctors = {doctorSelector()} settingdoctor = {settingdoctor} pagestate ={pagestate} cardStyle={classes.card} />
-      </main>
+        <div className={classes.drawerHeader} />
+        <Typography paragraph>
+          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla
+          facilisi etiam dignissim diam. Pulvinar elementum integer enim neque volutpat ac
+          tincidunt. Ornare suspendisse sed nisi lacus sed viverra tellus. Purus sit amet volutpat
+          consequat mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis risus sed
+          vulputate odio. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in. In
+          hendrerit gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem et
+          tortor. Habitant morbi tristique senectus et. Adipiscing elit duis tristique sollicitudin
+          nibh sit. Ornare aenean euismod elementum nisi quis eleifend. Commodo viverra maecenas
+          accumsan lacus vel facilisis. Nulla posuere sollicitudin aliquam ultrices sagittis orci a.
+        </Typography>
+      </main> */}
     </div>
   );
 }
+
+
+export default FilterMenu;

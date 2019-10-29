@@ -3,7 +3,6 @@ import "rbx/index.css";
 import {Container,Title } from "rbx";
 import firebase from 'firebase/app';
 import 'firebase/database';
-import page1 from './page1'
 import Autocomplete from 'react-google-autocomplete';
 
 import InputLabel from '@material-ui/core/InputLabel';
@@ -12,26 +11,14 @@ import MobileStepper from '@material-ui/core/MobileStepper';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import TextField from '@material-ui/core/TextField';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem'
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
 import AppBar from '@material-ui/core/AppBar';
+import Divider from '@material-ui/core/Divider';
 
 import {FormControl, CardHeader, CardContent, CardMedia} from '@material-ui/core';
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Box from '@material-ui/core/Box';
 import { sizing, spacing, positions } from '@material-ui/system';
-import Card from '@material-ui/core/Card';
 
-import Result from './results.js';
 import {FilterMenu} from './filter.js';
 
 const firebaseConfig = {
@@ -106,32 +93,35 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Pagetwo = ({pagestate,doctors,settingdoctor}) => {
-  
-  return (
-    <div>
-      {doctors.map(doctor =>
-        (<Card className={useStyles.card}>
-          <h1><strong>{doctor.profile.first_name + " " + doctor.profile.last_name}</strong></h1>
-          <CardMedia><img src={doctor.profile.image_url}></img></CardMedia>
-          <CardContent>Located in {doctor.practices[0].visit_address.city + ", " + doctor.practices[0].visit_address.state}
-          <Button size="large" onClick={function(event){settingdoctor.setdoc(doctor);pagestate.setpage(3)}}>View Doctor Bio</Button>
-          </CardContent>
-        </Card>))}
-     </div>
-  );
-}
+const pageThreeStyles = makeStyles(theme => ({
+ bio:{
+   marginTop: 20,
+   marginBottom: 20,
+ },
+ button:{
+   marginTop: 20,
+ }
+}));
 
-const PageThree = ({pagestate,doctors,settingdoctor}) => {
+const PageThree = ({pagestate,settingdoctor}) => {
+  const classes = pageThreeStyles();
+  var insuranceSet = new Set();
+  settingdoctor.doc.insurances.map(insurance=>insuranceSet.add(insurance.insurance_plan.name))
   return (
     <div>
     <h3><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
+    
+    <p className={classes.bio}>
+      <Divider/>
+      {settingdoctor.doc.profile.bio}
+      <Divider/>
+    </p>
+    
     <h1>Insurance Taken:</h1>
-    {settingdoctor.doc.insurances.map(insurance =>
-      <li>{insurance.insurance_provider.name}</li>
+    {Array.from(insuranceSet).map(insurance =>
+      <li>{insurance}</li>
       )}
-    <p>{settingdoctor.doc.profile.bio}</p>
-    <Button align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
+    <Button className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
     </div>
   )
 }
@@ -186,19 +176,6 @@ const Pageone = ({pagestate, coordinatestate}) => {
 
 
 
-const DocList = ({doctors}) => {
-  return(
-    <div>
-    {doctors.map(
-      doctor => (<div> {doctor.profile.first_name} {doctor.profile.last_name}
-        </div>
-
-    )
-  )}
-  </div>
-  )
-}
-
 const App =() => {
 
   const style ={
@@ -237,9 +214,6 @@ const App =() => {
   else if (page == 2) {
     return (
       <Container>
-        {/* <Title align="center" style = {style}>
-          QuickDoc
-        </Title> */}
         <FilterMenu pagestate = {{page,setpage}} doctors={json.data} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
@@ -254,7 +228,6 @@ const App =() => {
       </Container>
     );
   }
-  
   
 }
 /*
