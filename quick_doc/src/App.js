@@ -106,7 +106,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Pagetwo = ({pagestate,jsonstate,settingdoctor}) => {
-  const doctors = jsonstate.json.then((response) => response)
+  console.log(jsonstate.json)
+  const doctors = jsonstate.json
   
   return (
     <div>
