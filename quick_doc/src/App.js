@@ -242,17 +242,12 @@ const App =() => {
   }
   else if (page == 3) {
     return (
-<<<<<<< HEAD
-        
-        <PageThree pagestate={{page,setpage}} doctors={json.data} settingdoctor = {{doc,setdoc}}/>
-=======
       <Container>
         <Title align="center" style = {style}>
           QuickDoc
         </Title>
         <PageThree pagestate={{page,setpage}} jsonstate={{json,setjson}} settingdoctor = {{doc,setdoc}}/>
       </Container>
->>>>>>> dc152fb0a9f083d654d9bdad860c2ee28fb7dadb
     );
   }
   
