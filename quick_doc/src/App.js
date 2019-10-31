@@ -4,20 +4,10 @@ import {Container,Title } from "rbx";
 import firebase from 'firebase/app';
 import 'firebase/database';
 import Autocomplete from 'react-google-autocomplete';
-import Card from '@material-ui/core/Card';
-import InputLabel from '@material-ui/core/InputLabel';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import MobileStepper from '@material-ui/core/MobileStepper';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
+import { makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Divider from '@material-ui/core/Divider';
-
-import {FormControl, CardHeader, CardContent, CardMedia} from '@material-ui/core';
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import Box from '@material-ui/core/Box';
-import { sizing, spacing, positions } from '@material-ui/system';
 
 import {FilterMenu} from './filter.js';
 
@@ -40,59 +30,6 @@ const googleKey = "AIzaSyCfjp7ZKwdAFhg773PBrwMinONqf_cGBlU";
 // const docLocKey = 'e98def16c263c71592c3c2f74e24097a';
 // const docLocUrl = 'https://api.betterdoctor.com/2016-03-01/doctors?location=37.773,-122.413,100&skip=2&limit=10&user_key=' + docLocKey;
 
-const styles = theme => ({
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    backgroundColor: theme.palette.background.paper,
-  },
-  gridList: {
-    width: 'auto',
-    height: 'auto',
-  },
-  gridListTile: {
-    width: 'auto',
-    height: 'auto',
-    overflowY: 'auto',
-  },
-  icon: {
-    color: 'rgba(255, 255, 255, 0.54)',
-    width: 50,
-    height: 50,
-  },
-  disclaimer:{
-      marginBottom: 30,
-  }
-});
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  card: {
-    padding: 10,
-    maxWidth: 345,
-    marginTop: 20,
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    maxWidth: 300,
-  },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: 2,
-  },
-  noLabel: {
-    marginTop: theme.spacing(3),
-  },
-}));
-
 const pageThreeStyles = makeStyles(theme => ({
  bio:{
    marginTop: 20,
@@ -102,24 +39,6 @@ const pageThreeStyles = makeStyles(theme => ({
    marginTop: 20,
  }
 }));
-
-const Pagetwo = ({pagestate,jsonstate,settingdoctor}) => {
-  console.log(jsonstate.json)
-  const doctors = jsonstate.json
-  
-  return (
-    <div>
-      {doctors.map((doctor) =>
-        (<Card className={useStyles.card}>
-          <h1><strong>{doctor.profile.first_name + " " + doctor.profile.last_name}</strong></h1>
-          <CardMedia><img src={doctor.profile.image_url}></img></CardMedia>
-          <CardContent>Located in {doctor.practices[0].visit_address.city + ", " + doctor.practices[0].visit_address.state}
-          <Button size="large" onClick={function(event){settingdoctor.setdoc(doctor);pagestate.setpage(3)}}>View Doctor Bio</Button>
-          </CardContent>
-        </Card>))}
-     </div>
-  );
-}
 
 const PageThree = ({pagestate,settingdoctor}) => {
   const classes = pageThreeStyles();
@@ -252,30 +171,6 @@ const App =() => {
   }
   
 }
-/*
-old grid tile code
-    // <FilterMenu/>
-    <div className={styles.root}>
-      <GridList cellHeight={'auto'} cellWidth={50} className={styles.gridList}>
-        <GridListTile key="Subheader" cols={2}>
-          <ListSubheader component="h1">Here is your list of Doctors</ListSubheader>
-        </GridListTile>
-        {doctors.map(doctor => (
-          <GridListTile key={doctor.profile.image_url}>
-            <img src={doctor.profile.image_url}/>
-            <GridListTileBar
-              title={doctor.profile.first_name+ " " + doctor.profile.last_name}
-              subtitle={<span>{doctor.profile.title}</span>}
-              actionIcon={
-                <IconButton aria-label={`info about ${doctor.profile.first_name}`} onClick={function(event){settingdoctor.setdoc(doctor.profile);pagestate.setpage(3)}} className={styles.icon}>
-                  <InfoIcon />
-                </IconButton>
-              }
-            />
-          </GridListTile>
-        ))}
-      </GridList>
-    </div>
-*/
+
 
 export default App;
