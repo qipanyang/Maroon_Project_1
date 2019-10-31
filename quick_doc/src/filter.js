@@ -13,10 +13,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -175,16 +172,7 @@ export const FilterMenu =({pagestate,doctors,settingdoctor})=>{
   const handleSpecChange = event => {
     setSpec(event.target.value);
   };
-//   const handleSpecChangeMultiple = event => {
-//     const { options } = event.target;
-//     const value = [];
-//     for (let i = 0, l = options.length; i < l; i += 1) {
-//       if (options[i].selected) {
-//         value.push(options[i].value);
-//       }
-//     }
-//     setSpec(value);
-//   };
+
   const [insu, setInsu] = React.useState([]);
   const handleInsuChange = event => {
     setInsu(event.target.value);
@@ -294,8 +282,6 @@ const doctorSelector = () =>{
         <List>
 
             <ListItem key='specialties'>
-              {/* <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon> */}
-              {/* <ListItemText primary={text} /> */}
                 <FormControl className={classes.formControl}>
                     <InputLabel htmlFor="select-multiple-checkbox">specialties</InputLabel>
                     <Select
@@ -317,9 +303,6 @@ const doctorSelector = () =>{
             </ListItem>
             <Divider/>
             <ListItem key='insurance'>
-              {/* <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon> */}
-              {/* <ListItemText primary={text} /> */}
-
                 <FormControl className={classes.formControl}>
                     <InputLabel htmlFor="select-multiple-checkbox">Insurance</InputLabel>
                     <Select
@@ -339,7 +322,6 @@ const doctorSelector = () =>{
                     </Select>
                 </FormControl>
             </ListItem>
-          {/* ))} */}
         </List>
         <Divider />
       </Drawer>
