@@ -148,6 +148,7 @@ const DoctorCards = ({doctors, settingdoctor, pagestate}) => {
               </CardContent>
             </Card>
         </Grid>))}
+        <Button variant="contained" color="primary" size="large" onClick={function(event){pagestate.setpage(1)}}>Go Back</Button>
        </Grid>
     )
 }
