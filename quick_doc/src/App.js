@@ -96,6 +96,8 @@ const Pageone = ({pagestate,jsonstate}) => {
   const fetchjson = async (lat,long) => {
     const url = 'https://api.betterdoctor.com/2016-03-01/doctors?location='+ lat + ',' + long + ',100&skip=2&limit=10&user_key=e98def16c263c71592c3c2f74e24097a'
     const response = await fetch(url).then((response)=> response.json()).then((response)=> response.data);
+    console.log(typeof(response))
+    console.log(response)
     jsonstate.setjson(response);
   }
 
@@ -137,7 +139,7 @@ const App =() => {
   }
   const classes = pageOneStyles();
   const [page, setpage] = React.useState(1)
-  const [json, setjson] = React.useState({meta: {}, data: []});
+  const [json, setjson] = React.useState([]);
   const [doc,setdoc] = React.useState('');
 
   if (page === 1){
@@ -155,14 +157,14 @@ const App =() => {
   else if (page == 2) {
     return (
       <Container>
-        <FilterMenu pagestate = {{page,setpage}} doctors={json} settingdoctor = {{doc,setdoc}}/>
+        <FilterMenu pagestate = {{page,setpage}} jsonstate={{json,setjson}} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
   }
   else if (page == 3) {
     return (
       <Container>
-        <PageThree pagestate={{page,setpage}} jsonstate={{json,setjson}} settingdoctor = {{doc,setdoc}}/>
+        <PageThree pagestate={{page,setpage}} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
   }

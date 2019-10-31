@@ -19,7 +19,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import Input from '@material-ui/core/Input';
-import {FormControl, CardHeader, CardContent, CardMedia} from '@material-ui/core';
+import {FormControl, CardHeader, CardContent, CardMedia, Container} from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -75,6 +75,18 @@ const useStyles = makeStyles(theme => ({
         duration: theme.transitions.duration.leavingScreen,
       }),
       marginLeft: -drawerWidth,
+    },
+    wrong: {
+      flexGrow: 1,
+      marginTop: 70,
+      padding: theme.spacing(3),
+      marginLeft: 100,
+    },
+    goback_button: {
+      flexGrow: 1,
+      // marginTop: 70,
+      // padding: theme.spacing(3),
+      marginLeft: 200,
     },
     contentShift: {
       transition: theme.transitions.create('margin', {
@@ -148,14 +160,14 @@ const DoctorCards = ({doctors, settingdoctor, pagestate}) => {
               </CardContent>
             </Card>
         </Grid>))}
-        <Button variant="contained" color="primary" size="large" onClick={function(event){pagestate.setpage(1)}}>Go Back</Button>
        </Grid>
     )
 }
 
-export const FilterMenu =({pagestate,doctors,settingdoctor})=>{
+export const FilterMenu =({pagestate,jsonstate,settingdoctor})=>{
+  const doctors = jsonstate.json;
+  console.log(jsonstate.json)
   console.log(doctors)
-
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -240,16 +252,46 @@ const doctorSelector = () =>{
     }
     
 }
-
+  if (doctors.length === 0)
+  {
+    return (
+      <div className={classes.root}>
+        <Container>
+        <AppBar
+        position="fixed"
+        className={clsx(classes.appBar, {
+          [classes.appBarShift]: open,
+        })}>
+          <Toolbar>
+          <Typography variant="h6" noWrap>
+            Quick Doc
+          </Typography>
+          </Toolbar>
+        </AppBar>
+        <div className={classes.wrong}>
+          <Typography >
+          <font size="5"  color="red">
+           <strong> Please choose a legal location from the dropbox </strong>
+            </font>
+          </Typography>
+        </div>
+        <div className={classes.goback_button}>
+        <Button variant="contained" color="primary" size="large" onClick={function(event){jsonstate.setjson([]);pagestate.setpage(1);}}>Go Back</Button>
+        </div>
+        </Container>
+        
+      </div>
+    )
+  }
+  else{
   return (
     <div className={classes.root}>
-      <CssBaseline />
+      <Container>
       <AppBar
         position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
-        })}
-      >
+        })}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -333,6 +375,9 @@ const doctorSelector = () =>{
       >
           <DoctorCards doctors = {doctorSelector()} settingdoctor = {settingdoctor} pagestate ={pagestate} cardStyle={classes.card} />
       </main>
+      <Button variant="contained" color="primary" size="large" onClick={function(event){jsonstate.setjson([]);pagestate.setpage(1);}}>Go Back</Button>
+      </Container>
     </div>
   );
+}
 }
