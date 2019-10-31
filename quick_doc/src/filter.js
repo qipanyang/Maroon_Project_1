@@ -156,21 +156,10 @@ const DoctorCards = ({doctors, settingdoctor, pagestate}) => {
 }
 
 export const FilterMenu =({pagestate,doctors,settingdoctor})=>{
+  console.log(doctors)
 
   const classes = useStyles();
   const theme = useTheme();
-  const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-  ];
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
@@ -221,8 +210,6 @@ const getInsuList =() =>{
 }
 const specialties_list = getSpecList()
 const insurance_list = getInsuList()
-console.log(specialties_list)
-console.log(insurance_list)
 
 const matchInsu = (doctor) =>{
     var flag = 0
