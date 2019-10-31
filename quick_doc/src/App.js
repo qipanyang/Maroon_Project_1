@@ -4,7 +4,7 @@ import {Container,Title } from "rbx";
 import firebase from 'firebase/app';
 import 'firebase/database';
 import Autocomplete from 'react-google-autocomplete';
-
+import Card from '@material-ui/core/Card';
 import InputLabel from '@material-ui/core/InputLabel';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import MobileStepper from '@material-ui/core/MobileStepper';
@@ -103,6 +103,24 @@ const pageThreeStyles = makeStyles(theme => ({
  }
 }));
 
+const Pagetwo = ({pagestate,jsonstate,settingdoctor}) => {
+  console.log(jsonstate.json)
+  const doctors = jsonstate.json
+  
+  return (
+    <div>
+      {doctors.map((doctor) =>
+        (<Card className={useStyles.card}>
+          <h1><strong>{doctor.profile.first_name + " " + doctor.profile.last_name}</strong></h1>
+          <CardMedia><img src={doctor.profile.image_url}></img></CardMedia>
+          <CardContent>Located in {doctor.practices[0].visit_address.city + ", " + doctor.practices[0].visit_address.state}
+          <Button size="large" onClick={function(event){settingdoctor.setdoc(doctor);pagestate.setpage(3)}}>View Doctor Bio</Button>
+          </CardContent>
+        </Card>))}
+     </div>
+  );
+}
+
 const PageThree = ({pagestate,settingdoctor}) => {
   const classes = pageThreeStyles();
   var insuranceSet = new Set();
@@ -144,13 +162,17 @@ const pageOneStyles = makeStyles(theme => ({
   },
 }));
 
-const Pageone = ({pagestate, coordinatestate}) => {
+const Pageone = ({pagestate,jsonstate}) => {
   const switch_page = () => {
     pagestate.setpage(2)
   }
-  const set_coordinates = (lat, long) => {
-    coordinatestate.setcoordinates(lat + "," + long)
+
+  const fetchjson = async (lat,long) => {
+    const url = 'https://api.betterdoctor.com/2016-03-01/doctors?location='+ lat + ',' + long + ',100&skip=2&limit=10&user_key=e98def16c263c71592c3c2f74e24097a'
+    const response = await fetch(url).then((response)=> response.json()).then((response)=> response.data);
+    jsonstate.setjson(response);
   }
+
   const classes = pageOneStyles()
 
   const handleKeyPress =(event)=>{
@@ -167,7 +189,7 @@ const Pageone = ({pagestate, coordinatestate}) => {
         onPlaceSelected={(place) => {
           var lat = place.geometry.location.lat().toString();
           var lng = place.geometry.location.lng().toString();
-          set_coordinates(lat, lng);
+          fetchjson(lat,lng)
         }}
         types={[]}
         componentRestrictions={{country: "usa"}}
@@ -189,21 +211,8 @@ const App =() => {
   }
   const classes = pageOneStyles();
   const [page, setpage] = React.useState(1)
-  const [coordinates, setcoordinates] = React.useState("")
   const [json, setjson] = React.useState({meta: {}, data: []});
   const [doc,setdoc] = React.useState('');
-  const url = 'apiData/exampleData.json'
-  //const url = 'https://api.betterdoctor.com/2016-03-01/doctors?location='+ coordinates.lat + coordinates.lng + '100&skip=2&limit=10&user_key=e98def16c263c71592c3c2f74e24097a';
-
-  useEffect(() => {
-    const fetchjson = async () => {
-      const response = await fetch(url);
-      if (!response.ok) throw response;
-      const json = await response.json();
-      setjson(json);
-    }
-    fetchjson();
-  }, [])
 
   if (page === 1){
     return (
@@ -213,14 +222,14 @@ const App =() => {
             QuickDoc
           </Title>
         </AppBar>
-        <Pageone pagestate = {{page, setpage}} coordinatestate = {{coordinates, setcoordinates}}/>
+        <Pageone pagestate = {{page, setpage}} jsonstate={{json,setjson}}/>
       </Container>
     );
   }
   else if (page == 2) {
     return (
       <Container>
-        <FilterMenu pagestate = {{page,setpage}} doctors={json.data} settingdoctor = {{doc,setdoc}}/>
+        <FilterMenu pagestate = {{page,setpage}} doctors={json} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
   }
@@ -230,7 +239,7 @@ const App =() => {
         <Title align="center" style = {style}>
           QuickDoc
         </Title>
-        <PageThree pagestate={{page,setpage}} doctors={json.data} settingdoctor = {{doc,setdoc}}/>
+        <PageThree pagestate={{page,setpage}} jsonstate={{json,setjson}} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
   }
