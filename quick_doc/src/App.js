@@ -32,8 +32,8 @@ const googleKey = "AIzaSyCfjp7ZKwdAFhg773PBrwMinONqf_cGBlU";
 
 const pageThreeStyles = makeStyles(theme => ({
  bio:{
-   marginTop: 20,
-   marginBottom: 20,
+   marginTop: 60,
+   marginBottom: 10,
  },
  button:{
    marginTop: 20,
@@ -51,10 +51,10 @@ const PageThree = ({pagestate,settingdoctor}) => {
             QuickDoc
           </Title>
     </AppBar>
-    <div>
+    <div className={classes.bio}>
     <h3><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
     
-    <p className={classes.bio}>
+    <p>
       <Divider/>
       {settingdoctor.doc.profile.bio}
       <Divider/>
@@ -162,9 +162,6 @@ const App =() => {
   else if (page == 3) {
     return (
       <Container>
-        <Title align="center" style = {style}>
-          QuickDoc
-        </Title>
         <PageThree pagestate={{page,setpage}} jsonstate={{json,setjson}} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
