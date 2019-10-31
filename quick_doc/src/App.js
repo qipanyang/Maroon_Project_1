@@ -153,9 +153,15 @@ const Pageone = ({pagestate, coordinatestate}) => {
   }
   const classes = pageOneStyles()
 
+  const handleKeyPress =(event)=>{
+    if(event.key === "Enter"){
+      switch_page();
+    }
+  }
   return(
     <Container className={classes.searchBar} align="center">
     <Autocomplete
+        onKeyPress = {handleKeyPress}
         className={classes.searchInput}
         // style={{width: "70%", font:""}}
         onPlaceSelected={(place) => {
