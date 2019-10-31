@@ -8,6 +8,8 @@ import { makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Divider from '@material-ui/core/Divider';
+import logo from './insurance.png'
+import Typography from '@material-ui/core/Typography';
 
 import {FilterMenu} from './filter.js';
 
@@ -75,6 +77,7 @@ const pageOneStyles = makeStyles(theme => ({
     flexGrow: 1,
     marginTop: 15,
     marginBottom: 15,
+    fontSize: 25,
   },
   searchBar: {
     marginTop: 300,
@@ -86,6 +89,12 @@ const pageOneStyles = makeStyles(theme => ({
     fontFamily: "Helvetica",
     fontSize: 16,
   },
+  logo: {
+    width: 25,
+    height: 25,
+    marginLeft: 3,
+    marginBottom: -3,
+  }
 }));
 
 const Pageone = ({pagestate,jsonstate}) => {
@@ -146,9 +155,10 @@ const App =() => {
     return (
       <Container>
         <AppBar>
-          <Title align="center" className={classes.title}>
+          <Typography variant="h6" className={classes.title} align="center">
             QuickDoc
-          </Title>
+            <img src={logo} className={classes.logo}/>
+          </Typography>
         </AppBar>
         <Pageone pagestate = {{page, setpage}} jsonstate={{json,setjson}}/>
       </Container>
