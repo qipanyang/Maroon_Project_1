@@ -8,6 +8,9 @@ import { makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Divider from '@material-ui/core/Divider';
+import logo from './insurance.png'
+import Typography from '@material-ui/core/Typography';
+
 import {FilterMenu} from './filter.js';
 import TextField from '@material-ui/core/TextField'
 
@@ -32,8 +35,8 @@ const googleKey = "AIzaSyCfjp7ZKwdAFhg773PBrwMinONqf_cGBlU";
 
 const pageThreeStyles = makeStyles(theme => ({
  bio:{
-   marginTop: 20,
-   marginBottom: 20,
+   marginTop: 60,
+   marginBottom: 10,
  },
  button:{
    marginTop: 20,
@@ -51,10 +54,16 @@ const PageThree = ({pagestate,settingdoctor}) => {
   var insuranceSet = new Set();
   settingdoctor.doc.insurances.map(insurance=>insuranceSet.add(insurance.insurance_plan.name))
   return (
-    <div>
+    <Container>
+    <AppBar>
+          <Title align="center" >
+            QuickDoc
+          </Title>
+    </AppBar>
+    <div className={classes.bio}>
     <h3><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
     
-    <p className={classes.bio}>
+    <p>
       <Divider/>
       {settingdoctor.doc.profile.bio}
       <Divider/>
@@ -82,7 +91,7 @@ const PageThree = ({pagestate,settingdoctor}) => {
 
     
     </div>
-
+    </Container>
   )
 }
 
@@ -91,6 +100,7 @@ const pageOneStyles = makeStyles(theme => ({
     flexGrow: 1,
     marginTop: 15,
     marginBottom: 15,
+    fontSize: 25,
   },
   searchBar: {
     marginTop: 300,
@@ -102,6 +112,12 @@ const pageOneStyles = makeStyles(theme => ({
     fontFamily: "Helvetica",
     fontSize: 16,
   },
+  logo: {
+    width: 25,
+    height: 25,
+    marginLeft: 3,
+    marginBottom: -3,
+  }
 }));
 
 const Pageone = ({pagestate,jsonstate}) => {
@@ -112,6 +128,8 @@ const Pageone = ({pagestate,jsonstate}) => {
   const fetchjson = async (lat,long) => {
     const url = 'https://api.betterdoctor.com/2016-03-01/doctors?location='+ lat + ',' + long + ',100&skip=2&limit=10&user_key=e98def16c263c71592c3c2f74e24097a'
     const response = await fetch(url).then((response)=> response.json()).then((response)=> response.data);
+    console.log(typeof(response))
+    console.log(response)
     jsonstate.setjson(response);
   }
 
@@ -153,7 +171,7 @@ const App =() => {
   }
   const classes = pageOneStyles();
   const [page, setpage] = React.useState(1)
-  const [json, setjson] = React.useState({meta: {}, data: []});
+  const [json, setjson] = React.useState([]);
   const [doc,setdoc] = React.useState('');
 
 
@@ -161,9 +179,10 @@ const App =() => {
     return (
       <Container>
         <AppBar>
-          <Title align="center" className={classes.title}>
+          <Typography variant="h6" className={classes.title} align="center">
             QuickDoc
-          </Title>
+            <img src={logo} className={classes.logo}/>
+          </Typography>
         </AppBar>
         <Pageone pagestate = {{page, setpage}} jsonstate={{json,setjson}}/>
       </Container>
@@ -172,17 +191,14 @@ const App =() => {
   else if (page == 2) {
     return (
       <Container>
-        <FilterMenu pagestate = {{page,setpage}} doctors={json} settingdoctor = {{doc,setdoc}}/>
+        <FilterMenu pagestate = {{page,setpage}} jsonstate={{json,setjson}} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
   }
   else if (page == 3) {
     return (
       <Container>
-        <Title align="center" style = {style}>
-          QuickDoc
-        </Title>
-        <PageThree pagestate={{page,setpage}} jsonstate={{json,setjson}} settingdoctor = {{doc,setdoc}}/>
+        <PageThree pagestate={{page,setpage}} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
   }
