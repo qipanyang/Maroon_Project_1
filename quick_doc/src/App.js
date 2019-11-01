@@ -8,8 +8,8 @@ import { makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Divider from '@material-ui/core/Divider';
-
 import {FilterMenu} from './filter.js';
+import TextField from '@material-ui/core/TextField'
 
 const firebaseConfig = {
     apiKey: "AIzaSyCPlCnToFlfovuDUaAGesBUNLZw8DAxTnQ",
@@ -37,6 +37,12 @@ const pageThreeStyles = makeStyles(theme => ({
  },
  button:{
    marginTop: 20,
+ },
+ textField:{
+    align: "right",
+    marginLeft:theme.spacing(1),
+    marginRight:theme.spacing(1),
+    width: 200,
  }
 }));
 
@@ -58,8 +64,25 @@ const PageThree = ({pagestate,settingdoctor}) => {
     {Array.from(insuranceSet).map(insurance =>
       <li>{insurance}</li>
       )}
+    <h1>Enter a Review</h1>
+    <TextField
+          id="standard-basic"
+          className={pageThreeStyles.textField}
+          label="Name"
+          margin="normal"
+        />
+    <TextField
+          id="standard-basic"
+          className={pageThreeStyles.textField}
+          label="Rating"
+          margin="normal"
+        />
+    <Button className={classes.button} variant="contained" color="primary" align="center" size="large">Submit Rating</Button>
     <Button className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
+
+    
     </div>
+
   )
 }
 
@@ -132,6 +155,7 @@ const App =() => {
   const [page, setpage] = React.useState(1)
   const [json, setjson] = React.useState({meta: {}, data: []});
   const [doc,setdoc] = React.useState('');
+
 
   if (page === 1){
     return (
