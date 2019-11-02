@@ -149,8 +149,12 @@ const doctorCardStyles = makeStyles(theme => ({
   }
 }));
 
-const DoctorCards = ({doctors, settingdoctor, pagestate}) => {
+const DoctorCards = ({doctors, settingdoctor, pagestate, reviewstate}) => {
     const classes = doctorCardStyles();
+    console.log(reviewstate.review)
+    const getname = (doctor) => {
+      return doctor.profile.first_name + " " + doctor.profile.last_name
+    }
     return(
         <Grid container spacing={2} className={classes.grid}>       
         {doctors.map(doctor =>
@@ -159,7 +163,9 @@ const DoctorCards = ({doctors, settingdoctor, pagestate}) => {
               <h1><strong>{doctor.profile.first_name + " " + doctor.profile.last_name}</strong></h1>
               <CardMedia><img src={doctor.profile.image_url}></img></CardMedia>
               <CardContent className={classes.content}>
-              <Rater  rating={4} interactive={false} />
+              {
+                Object.keys(reviewstate.review).includes(getname(doctor)) ? <Rater  rating={reviewstate.review[getname(doctor)]["totalrating"]/reviewstate.review[getname(doctor)]["totalcount"]} interactive={false} /> : <Typography> No rating </Typography>
+              }
                 Located in {doctor.practices[0].visit_address.city + ", " + doctor.practices[0].visit_address.state}
           
                 <Button variant="contained" color="primary" size="large" onClick={function(event){settingdoctor.setdoc(doctor);pagestate.setpage(3)}}>View Doctor Bio</Button>
@@ -170,10 +176,12 @@ const DoctorCards = ({doctors, settingdoctor, pagestate}) => {
     )
 }
 
-export const FilterMenu =({pagestate,jsonstate,settingdoctor})=>{
+export const FilterMenu =({pagestate,jsonstate,settingdoctor,reviewstate})=>{
+
+// db.child("doctors").child("Nirali Patel").once('value').then(function(snapshot) {
+//   const val = snapshot.val() && snapshot.val();
+// })
   const doctors = jsonstate.json;
-  console.log(jsonstate.json)
-  console.log(doctors)
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -382,7 +390,7 @@ const doctorSelector = () =>{
           [classes.contentShift]: open,
         })}
       >
-          <DoctorCards doctors = {doctorSelector()} settingdoctor = {settingdoctor} pagestate ={pagestate} cardStyle={classes.card} />
+          <DoctorCards doctors = {doctorSelector()} settingdoctor = {settingdoctor} pagestate ={pagestate} reviewstate = {reviewstate} />
       </main>
       <Button variant="contained" color="primary" size="large" onClick={function(event){jsonstate.setjson([]);pagestate.setpage(1);}}>Go Back</Button>
       </Container>
