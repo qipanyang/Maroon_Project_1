@@ -8,8 +8,10 @@ import { makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Divider from '@material-ui/core/Divider';
-import logo from './insurance.png'
+import logo from './Images/insurance.png'
 import Typography from '@material-ui/core/Typography';
+import Background from './Images/background.jpg';
+import Paper from '@material-ui/core/Paper';
 
 import {FilterMenu} from './filter.js';
 
@@ -80,22 +82,49 @@ const pageOneStyles = makeStyles(theme => ({
     fontSize: 25,
   },
   searchBar: {
-    marginTop: 300,
-    align: "center",
+    alignItems: "center",
+    marginLeft: 50,
+    paddingTop: 300,
+    paddingBottom: 200,
+    // backgroundColor: 'rgba(44, 45, 51, 0.3)',
+    // backgroundSize: 'cover',
   },
   searchInput: {
     width: '70%', 
     height: 30,
     fontFamily: "Helvetica",
     fontSize: 16,
+    marginTop: 30,
+    paddingLeft: 15,
   },
   logo: {
     width: 25,
     height: 25,
     marginLeft: 3,
     marginBottom: -3,
+  },
+  summary: {
+    color: 'white',
+    textAlign: "center",
+  },
+  button: {
+    color: 'white',
+  },
+  background: {
+    backgroundImage: `url(${Background})`,
+    backgroundPosition: 'center',
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundAttachment: 'fixed',
+    background: 'rgba(44, 45, 51, 0.3)',
+  },
+  overlay: {
+    backgroundColor: 'rgba(44, 45, 51, 0.3)',
+    backgroundPosition: 'center',
+    backgroundSize: 'cover',
   }
 }));
+
 
 const Pageone = ({pagestate,jsonstate}) => {
   const switch_page = () => {
@@ -117,28 +146,39 @@ const Pageone = ({pagestate,jsonstate}) => {
       switch_page();
     }
   }
+
   return(
+    <div className={classes.background}>
+    <div className={classes.overlay}>
+    <AppBar>
+      <Typography variant="h6" className={classes.title} align="center">
+        QuickDoc
+        <img src={logo} className={classes.logo}/>
+      </Typography>
+    </AppBar>
     <Container className={classes.searchBar} align="center">
-    <Autocomplete
-        onKeyPress = {handleKeyPress}
-        className={classes.searchInput}
-        // style={{width: "70%", font:""}}
-        onPlaceSelected={(place) => {
-          var lat = place.geometry.location.lat().toString();
-          var lng = place.geometry.location.lng().toString();
-          fetchjson(lat,lng)
-        }}
-        types={[]}
-        componentRestrictions={{country: "usa"}}
-    />
-    <Button size = "large" onClick = {switch_page}>
-      Search
-    </Button>
+      <Typography variant="h5" className={classes.summary}>
+          Information on local doctors at your fingertips.
+      </Typography>
+      <Autocomplete
+          onKeyPress = {handleKeyPress}
+          className={classes.searchInput}
+          onPlaceSelected={(place) => {
+            var lat = place.geometry.location.lat().toString();
+            var lng = place.geometry.location.lng().toString();
+            fetchjson(lat,lng)
+          }}
+          types={[]}
+          componentRestrictions={{country: "usa"}}
+      />
+      <Button size = "large" onClick = {switch_page} className={classes.button}>
+        Search
+      </Button>
     </Container>
-    
+    </div>
+    </div>
   )
 }
-
 
 
 const App =() => {
@@ -153,15 +193,7 @@ const App =() => {
 
   if (page === 1){
     return (
-      <Container>
-        <AppBar>
-          <Typography variant="h6" className={classes.title} align="center">
-            QuickDoc
-            <img src={logo} className={classes.logo}/>
-          </Typography>
-        </AppBar>
-        <Pageone pagestate = {{page, setpage}} jsonstate={{json,setjson}}/>
-      </Container>
+        <Pageone pagestate = {{page, setpage}} jsonstate={{json,setjson}} className={classes.pageone}/>
     );
   }
   else if (page == 2) {
