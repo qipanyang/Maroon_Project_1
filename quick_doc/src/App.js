@@ -54,8 +54,8 @@ const PageThree = ({pagestate,settingdoctor}) => {
   const [ratingval,setrating] = useState('');
 
   function submitrating(settingdoctor,rating) {
-    const doctorname = settingdoctor.doc.profile.first_name + settingdoctor.doc.profile.last_name;
-    db.child('ratings').push({doctorname : rating });
+    var doctorname = settingdoctor.doc.profile.first_name + settingdoctor.doc.profile.last_name;
+    db.child('ratings').child(0).update({ doctorname : rating });
   }
   var insuranceSet = new Set();
   settingdoctor.doc.insurances.map(insurance=>insuranceSet.add(insurance.insurance_plan.name))
