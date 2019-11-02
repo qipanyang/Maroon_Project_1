@@ -10,8 +10,13 @@ import AppBar from '@material-ui/core/AppBar';
 import Divider from '@material-ui/core/Divider';
 import logo from './Images/insurance.png'
 import Typography from '@material-ui/core/Typography';
+
 import Background from './Images/background.jpg';
 import Paper from '@material-ui/core/Paper';
+
+import {FormControl, CardHeader, CardContent, CardMedia} from '@material-ui/core';
+
+
 
 import {FilterMenu} from './filter.js';
 
@@ -41,34 +46,50 @@ const pageThreeStyles = makeStyles(theme => ({
  },
  button:{
    marginTop: 20,
+ },
+ h3:{
+   padding: '60 px',
+   fontSize: 72,
  }
 }));
 
 const PageThree = ({pagestate,settingdoctor}) => {
   const classes = pageThreeStyles();
+  var practicesSet = new Set();
+  settingdoctor.doc.practices.map(practices=>practicesSet.add(practices.name));
   var insuranceSet = new Set();
-  settingdoctor.doc.insurances.map(insurance=>insuranceSet.add(insurance.insurance_plan.name))
+  settingdoctor.doc.insurances.map(insurance=>insuranceSet.add(insurance.insurance_plan.name));
   return (
-    <Container>
-    <AppBar>
-          <Title align="center" >
-            QuickDoc
-          </Title>
-    </AppBar>
+    <Container style={{marginLeft: 20, marginRight: 20}}>
     <div className={classes.bio}>
-    <h3><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
+    <h3 style={{fontSize: 36, padding: '50 px', paddingTop: 40}}><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
+    <div style={{float: 'right'}}>
+      <CardMedia><img src={settingdoctor.doc.profile.image_url}></img></CardMedia>
+    </div>
     
-    <p>
+    <p style={{marginTop: 140}}>
+      <h5 style={{fontSize: 18, fontStyle: 'italic', marginBottom: 10}}>Biography</h5>
       <Divider/>
       {settingdoctor.doc.profile.bio}
+    </p>
+
+    <p style={{marginTop:60}}>
+      <h5 style={{fontSize: 18, fontStyle: 'italic', marginBottom: 10}}>Practices</h5>
       <Divider/>
+      {Array.from(practicesSet).map(practices =>
+      <li>{practices}</li>
+      )}
     </p>
     
-    <h1>Insurance Taken:</h1>
-    {Array.from(insuranceSet).map(insurance =>
+    <p style={{marginTop:60}}>
+      <h5 style={{fontSize: 18, fontStyle: 'italic', marginBottom: 10}}>Insurance Plans Taken</h5>
+      <Divider/>
+      {Array.from(insuranceSet).map(insurance =>
       <li>{insurance}</li>
       )}
-    <Button className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
+    </p>
+
+    <Button style={{margin: 40, float:'right'}} className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
     </div>
     </Container>
   )
@@ -206,6 +227,12 @@ const App =() => {
   else if (page == 3) {
     return (
       <Container>
+        <AppBar>
+          <Typography variant="h6" className={classes.title} align="center">
+            QuickDoc
+            <img src={logo} className={classes.logo}/>
+          </Typography>
+        </AppBar>
         <PageThree pagestate={{page,setpage}} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
