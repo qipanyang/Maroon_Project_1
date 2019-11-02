@@ -4,20 +4,12 @@ import {Container,Title } from "rbx";
 import firebase from 'firebase/app';
 import 'firebase/database';
 import Autocomplete from 'react-google-autocomplete';
-
-import InputLabel from '@material-ui/core/InputLabel';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import MobileStepper from '@material-ui/core/MobileStepper';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
+import { makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Divider from '@material-ui/core/Divider';
-
-import {FormControl, CardHeader, CardContent, CardMedia} from '@material-ui/core';
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import Box from '@material-ui/core/Box';
-import { sizing, spacing, positions } from '@material-ui/system';
+import logo from './insurance.png'
+import Typography from '@material-ui/core/Typography';
 
 import {FilterMenu} from './filter.js';
 
@@ -40,63 +32,10 @@ const googleKey = "AIzaSyCfjp7ZKwdAFhg773PBrwMinONqf_cGBlU";
 // const docLocKey = 'e98def16c263c71592c3c2f74e24097a';
 // const docLocUrl = 'https://api.betterdoctor.com/2016-03-01/doctors?location=37.773,-122.413,100&skip=2&limit=10&user_key=' + docLocKey;
 
-const styles = theme => ({
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    backgroundColor: theme.palette.background.paper,
-  },
-  gridList: {
-    width: 'auto',
-    height: 'auto',
-  },
-  gridListTile: {
-    width: 'auto',
-    height: 'auto',
-    overflowY: 'auto',
-  },
-  icon: {
-    color: 'rgba(255, 255, 255, 0.54)',
-    width: 50,
-    height: 50,
-  },
-  disclaimer:{
-      marginBottom: 30,
-  }
-});
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  card: {
-    padding: 10,
-    maxWidth: 345,
-    marginTop: 20,
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    maxWidth: 300,
-  },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: 2,
-  },
-  noLabel: {
-    marginTop: theme.spacing(3),
-  },
-}));
-
 const pageThreeStyles = makeStyles(theme => ({
  bio:{
-   marginTop: 20,
-   marginBottom: 20,
+   marginTop: 60,
+   marginBottom: 10,
  },
  button:{
    marginTop: 20,
@@ -108,10 +47,16 @@ const PageThree = ({pagestate,settingdoctor}) => {
   var insuranceSet = new Set();
   settingdoctor.doc.insurances.map(insurance=>insuranceSet.add(insurance.insurance_plan.name))
   return (
-    <div>
+    <Container>
+    <AppBar>
+          <Title align="center" >
+            QuickDoc
+          </Title>
+    </AppBar>
+    <div className={classes.bio}>
     <h3><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
     
-    <p className={classes.bio}>
+    <p>
       <Divider/>
       {settingdoctor.doc.profile.bio}
       <Divider/>
@@ -123,6 +68,7 @@ const PageThree = ({pagestate,settingdoctor}) => {
       )}
     <Button className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
     </div>
+    </Container>
   )
 }
 
@@ -131,6 +77,7 @@ const pageOneStyles = makeStyles(theme => ({
     flexGrow: 1,
     marginTop: 15,
     marginBottom: 15,
+    fontSize: 25,
   },
   searchBar: {
     marginTop: 300,
@@ -142,26 +89,44 @@ const pageOneStyles = makeStyles(theme => ({
     fontFamily: "Helvetica",
     fontSize: 16,
   },
+  logo: {
+    width: 25,
+    height: 25,
+    marginLeft: 3,
+    marginBottom: -3,
+  }
 }));
 
-const Pageone = ({pagestate, coordinatestate}) => {
+const Pageone = ({pagestate,jsonstate}) => {
   const switch_page = () => {
     pagestate.setpage(2)
   }
-  const set_coordinates = (lat, long) => {
-    coordinatestate.setcoordinates(lat + "," + long)
+
+  const fetchjson = async (lat,long) => {
+    const url = 'https://api.betterdoctor.com/2016-03-01/doctors?location='+ lat + ',' + long + ',100&skip=2&limit=10&user_key=e98def16c263c71592c3c2f74e24097a'
+    const response = await fetch(url).then((response)=> response.json()).then((response)=> response.data);
+    console.log(typeof(response))
+    console.log(response)
+    jsonstate.setjson(response);
   }
+
   const classes = pageOneStyles()
 
+  const handleKeyPress =(event)=>{
+    if(event.key === "Enter"){
+      switch_page();
+    }
+  }
   return(
     <Container className={classes.searchBar} align="center">
     <Autocomplete
+        onKeyPress = {handleKeyPress}
         className={classes.searchInput}
         // style={{width: "70%", font:""}}
         onPlaceSelected={(place) => {
           var lat = place.geometry.location.lat().toString();
           var lng = place.geometry.location.lng().toString();
-          set_coordinates(lat, lng);
+          fetchjson(lat,lng)
         }}
         types={[]}
         componentRestrictions={{country: "usa"}}
@@ -183,77 +148,38 @@ const App =() => {
   }
   const classes = pageOneStyles();
   const [page, setpage] = React.useState(1)
-  const [coordinates, setcoordinates] = React.useState("")
-  const [json, setjson] = React.useState({meta: {}, data: []});
+  const [json, setjson] = React.useState([]);
   const [doc,setdoc] = React.useState('');
-  const url = 'apiData/exampleData.json'
-  //const url = 'https://api.betterdoctor.com/2016-03-01/doctors?location='+ coordinates.lat + coordinates.lng + '100&skip=2&limit=10&user_key=e98def16c263c71592c3c2f74e24097a';
-
-  useEffect(() => {
-    const fetchjson = async () => {
-      const response = await fetch(url);
-      if (!response.ok) throw response;
-      const json = await response.json();
-      setjson(json);
-    }
-    fetchjson();
-  }, [])
 
   if (page === 1){
     return (
       <Container>
         <AppBar>
-          <Title align="center" className={classes.title}>
+          <Typography variant="h6" className={classes.title} align="center">
             QuickDoc
-          </Title>
+            <img src={logo} className={classes.logo}/>
+          </Typography>
         </AppBar>
-        <Pageone pagestate = {{page, setpage}} coordinatestate = {{coordinates, setcoordinates}}/>
+        <Pageone pagestate = {{page, setpage}} jsonstate={{json,setjson}}/>
       </Container>
     );
   }
   else if (page == 2) {
     return (
       <Container>
-        <FilterMenu pagestate = {{page,setpage}} doctors={json.data} settingdoctor = {{doc,setdoc}}/>
+        <FilterMenu pagestate = {{page,setpage}} jsonstate={{json,setjson}} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
   }
   else if (page == 3) {
     return (
       <Container>
-        <Title align="center" style = {style}>
-          QuickDoc
-        </Title>
-        <PageThree pagestate={{page,setpage}} doctors={json.data} settingdoctor = {{doc,setdoc}}/>
+        <PageThree pagestate={{page,setpage}} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
   }
   
 }
-/*
-old grid tile code
-    // <FilterMenu/>
-    <div className={styles.root}>
-      <GridList cellHeight={'auto'} cellWidth={50} className={styles.gridList}>
-        <GridListTile key="Subheader" cols={2}>
-          <ListSubheader component="h1">Here is your list of Doctors</ListSubheader>
-        </GridListTile>
-        {doctors.map(doctor => (
-          <GridListTile key={doctor.profile.image_url}>
-            <img src={doctor.profile.image_url}/>
-            <GridListTileBar
-              title={doctor.profile.first_name+ " " + doctor.profile.last_name}
-              subtitle={<span>{doctor.profile.title}</span>}
-              actionIcon={
-                <IconButton aria-label={`info about ${doctor.profile.first_name}`} onClick={function(event){settingdoctor.setdoc(doctor.profile);pagestate.setpage(3)}} className={styles.icon}>
-                  <InfoIcon />
-                </IconButton>
-              }
-            />
-          </GridListTile>
-        ))}
-      </GridList>
-    </div>
-*/
+
 
 export default App;
