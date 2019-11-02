@@ -51,6 +51,12 @@ const pageThreeStyles = makeStyles(theme => ({
 
 const PageThree = ({pagestate,settingdoctor}) => {
   const classes = pageThreeStyles();
+  const [ratingval,setrating] = useState('');
+
+  function submitrating(settingdoctor,rating) {
+    const doctorname = settingdoctor.doc.profile.first_name + settingdoctor.doc.profile.last_name;
+    db.child('ratings').push({doctorname : rating });
+  }
   var insuranceSet = new Set();
   settingdoctor.doc.insurances.map(insurance=>insuranceSet.add(insurance.insurance_plan.name))
   return (
@@ -74,22 +80,19 @@ const PageThree = ({pagestate,settingdoctor}) => {
       <li>{insurance}</li>
       )}
     <h1>Enter a Review</h1>
-    <TextField
-          id="standard-basic"
-          className={pageThreeStyles.textField}
-          label="Name"
-          margin="normal"
-        />
-    <TextField
-          id="standard-basic"
-          className={pageThreeStyles.textField}
-          label="Rating"
-          margin="normal"
-        />
-    <Button className={classes.button} variant="contained" color="primary" align="center" size="large">Submit Rating</Button>
-    <Button className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
 
+    <TextField
+          id="rating"
+          name="rating"
+          value={ratingval}
+          className={pageThreeStyles.textField}
+          onChange={(e) => setrating(e.target.value)}
+          label="rating"
+          margin="normal"
+        />
+    <Button className={classes.button} variant="contained" color="primary" align="center" onClick={function(event){submitrating(settingdoctor,ratingval)}} size="large">Submit Rating</Button>
     
+    <Button className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
     </div>
     </Container>
   )
