@@ -56,13 +56,8 @@ const PageThree = ({pagestate,settingdoctor}) => {
   settingdoctor.doc.insurances.map(insurance=>insuranceSet.add(insurance.insurance_plan.name));
   return (
     <Container style={{marginLeft: 20, marginRight: 20}}>
-    <AppBar>
-          <Title align="center" >
-            QuickDoc
-          </Title>
-    </AppBar>
     <div className={classes.bio}>
-    <h3 style={{fontSize: 36, padding: '50 px'}}><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
+    <h3 style={{fontSize: 36, padding: '50 px', paddingTop: 40}}><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
     <div style={{float: 'right'}}>
       <CardMedia><img src={settingdoctor.doc.profile.image_url}></img></CardMedia>
     </div>
@@ -72,20 +67,20 @@ const PageThree = ({pagestate,settingdoctor}) => {
       <Divider/>
       {settingdoctor.doc.profile.bio}
     </p>
-    
-    <p style={{marginTop:60}}>
-      <h5 style={{fontSize: 18, fontStyle: 'italic', marginBottom: 10}}>Insurance Taken</h5>
-      <Divider/>
-      {Array.from(insuranceSet).map(insurance =>
-      <li>{insurance}</li>
-      )}
-    </p>
 
     <p style={{marginTop:60}}>
       <h5 style={{fontSize: 18, fontStyle: 'italic', marginBottom: 10}}>Practices</h5>
       <Divider/>
       {Array.from(practicesSet).map(practices =>
       <li>{practices}</li>
+      )}
+    </p>
+    
+    <p style={{marginTop:60}}>
+      <h5 style={{fontSize: 18, fontStyle: 'italic', marginBottom: 10}}>Insurance Plans Taken</h5>
+      <Divider/>
+      {Array.from(insuranceSet).map(insurance =>
+      <li>{insurance}</li>
       )}
     </p>
 
@@ -197,6 +192,12 @@ const App =() => {
   else if (page == 3) {
     return (
       <Container>
+        <AppBar>
+          <Typography variant="h6" className={classes.title} align="center">
+            QuickDoc
+            <img src={logo} className={classes.logo}/>
+          </Typography>
+        </AppBar>
         <PageThree pagestate={{page,setpage}} settingdoctor = {{doc,setdoc}}/>
       </Container>
     );
