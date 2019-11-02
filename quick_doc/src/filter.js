@@ -23,7 +23,9 @@ import {FormControl, CardHeader, CardContent, CardMedia, Container} from '@mater
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import Ratings from 'react-ratings-declarative';
+// import Ratings from 'react-ratings-declarative';
+import Rater from 'react-rater'
+import 'react-rater/lib/react-rater.css'
 
 
 
@@ -156,12 +158,11 @@ const DoctorCards = ({doctors, settingdoctor, pagestate}) => {
             <Card className={classes.card}>
               <h1><strong>{doctor.profile.first_name + " " + doctor.profile.last_name}</strong></h1>
               <CardMedia><img src={doctor.profile.image_url}></img></CardMedia>
-              <CardContent className={classes.content}>Located in {doctor.practices[0].visit_address.city + ", " + doctor.practices[0].visit_address.state}
-              <Ratings rating={5} starRatedColor="blue"
-          //changeRating={this.changeRating}
-          name='rating'/>
+              <CardContent className={classes.content}>
+              <Rater  rating={4} interactive={false} />
+                Located in {doctor.practices[0].visit_address.city + ", " + doctor.practices[0].visit_address.state}
+          
                 <Button variant="contained" color="primary" size="large" onClick={function(event){settingdoctor.setdoc(doctor);pagestate.setpage(3)}}>View Doctor Bio</Button>
-            
               </CardContent>
             </Card>
         </Grid>))}
