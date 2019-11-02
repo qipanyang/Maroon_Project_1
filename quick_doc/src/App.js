@@ -205,6 +205,7 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
     <Container style={{marginLeft: 20, marginRight: 20}}>
     <div className={classes.bio}>
     <h3 style={{fontSize: 36, padding: '50 px', paddingTop: 40}}><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
+    {Object.keys(reviewstate.review).includes(docname) ? <ReactStars  value={reviewstate.review[docname]["totalrating"]/reviewstate.review[docname]["totalcount"]} edit={false} /> : <Typography> No rating </Typography>}
     <div style={{float: 'right'}}>
       <CardMedia><img src={settingdoctor.doc.profile.image_url}></img></CardMedia>
     </div>
