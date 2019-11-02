@@ -95,7 +95,7 @@ const pageOneStyles = makeStyles(theme => ({
     fontFamily: "Helvetica",
     fontSize: 16,
     marginTop: 30,
-    paddingLeft: 15,
+    paddingLeft: 15, 
   },
   logo: {
     width: 25,
