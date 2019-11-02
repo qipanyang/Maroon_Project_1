@@ -53,9 +53,20 @@ const PageThree = ({pagestate,settingdoctor}) => {
   const classes = pageThreeStyles();
   const [ratingval,setrating] = useState('');
 
-  function submitrating(settingdoctor,rating) {
-    var doctorname = settingdoctor.doc.profile.first_name + settingdoctor.doc.profile.last_name;
-    db.child('ratings').child(0).update({ doctorname : rating });
+  function submitrating(docname,rating) {
+    const oldrating = db.orderByChild('doctor');
+    const oldcount = db.orderByChild('doctor');
+    if(oldrating == null){
+      db.child(docname).child('totalrating').update(Number(rating))
+      db.child(docname).child('ratingcount').update(1)
+    }
+    else{
+      oldrating = oldrating + Number(rating)
+      oldcount = oldcount + 1
+      db.child(docname).child('totalrating').update(oldrating);
+      db.child(docname).child('ratingcount').update(oldcount);
+    }
+  
   }
   var insuranceSet = new Set();
   settingdoctor.doc.insurances.map(insurance=>insuranceSet.add(insurance.insurance_plan.name))
@@ -90,7 +101,7 @@ const PageThree = ({pagestate,settingdoctor}) => {
           label="rating"
           margin="normal"
         />
-    <Button className={classes.button} variant="contained" color="primary" align="center" onClick={function(event){submitrating(settingdoctor,ratingval)}} size="large">Submit Rating</Button>
+    <Button className={classes.button} variant="contained" color="primary" align="center" onClick={function(event){submitrating(settingdoctor.doc.profile.first_name + ' ' + settingdoctor.doc.profile.last_name,ratingval)}} size="large">Submit Rating</Button>
     
     <Button className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
     </div>
