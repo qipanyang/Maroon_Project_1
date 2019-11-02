@@ -15,6 +15,17 @@ import Background from './Images/background.jpg';
 import Paper from '@material-ui/core/Paper';
 
 import {FormControl, CardHeader, CardContent, CardMedia} from '@material-ui/core';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
+// import Rater from 'react-rater'
+import ReactStars from 'react-stars'
+
+
+
 
 
 
@@ -160,8 +171,32 @@ const Pageone = ({pagestate,jsonstate}) => {
   )
 }
 
-const PageThree = ({pagestate,settingdoctor}) => {
+const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
   const classes = pageThreeStyles();
+  const [openrating, setOpenrating] = React.useState(false);
+  const handleClickOpen = () => {
+    setOpenrating(true);
+  };
+  const handleClose = () => {
+    setOpenrating(false);
+  };
+  const docname = settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name;
+
+  
+  const [ratingval, setratingval] = React.useState(0);
+  const ratingChanged = (rating) => {
+    setratingval(rating);
+  }
+  const submitrating = () =>{
+    if (Object.keys(reviewstate.review).includes(docname)){
+      db.child(docname).set({totalrating: reviewstate.review[docname]["totalrating"]+ratingval, totalcount: reviewstate.review[docname]["totalcount"]+1})
+    }
+    else{
+      db.child(docname).set({totalrating: ratingval, totalcount: 1})
+    }
+    setOpenrating(false);
+  }
+
   var practicesSet = new Set();
   settingdoctor.doc.practices.map(practices=>practicesSet.add(practices.name));
   var insuranceSet = new Set();
@@ -195,7 +230,27 @@ const PageThree = ({pagestate,settingdoctor}) => {
       <li>{insurance}</li>
       )}
     </p>
-
+    <Button className={classes.button} variant="contained"  onClick={handleClickOpen}>
+        Review the doctor
+      </Button>
+      <Dialog open={openrating} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            To subscribe to this website, please enter your email address here. We will send updates
+            occasionally.
+          </DialogContentText>
+          <ReactStars count={5} value={ratingval} onChange={ratingChanged} size={24} color2={'#ffd700'} />        
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={submitrating} color="primary">
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
     <Button style={{margin: 40, float:'right'}} className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
     </div>
     </Container>
@@ -245,7 +300,7 @@ const App =() => {
             <img src={logo} className={classes.logo}/>
           </Typography>
         </AppBar>
-        <PageThree pagestate={{page,setpage}} settingdoctor = {{doc,setdoc}}/>
+        <PageThree pagestate={{page,setpage}} settingdoctor = {{doc,setdoc}} reviewstate = {{review, setreview}}/>
       </Container>
     );
   }
