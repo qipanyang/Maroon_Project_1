@@ -10,6 +10,8 @@ import AppBar from '@material-ui/core/AppBar';
 import Divider from '@material-ui/core/Divider';
 import logo from './insurance.png'
 import Typography from '@material-ui/core/Typography';
+import {FormControl, CardHeader, CardContent, CardMedia} from '@material-ui/core';
+
 
 import {FilterMenu} from './filter.js';
 
@@ -48,10 +50,12 @@ const pageThreeStyles = makeStyles(theme => ({
 
 const PageThree = ({pagestate,settingdoctor}) => {
   const classes = pageThreeStyles();
+  var practicesSet = new Set();
+  settingdoctor.doc.practices.map(practices=>practicesSet.add(practices.name));
   var insuranceSet = new Set();
-  settingdoctor.doc.insurances.map(insurance=>insuranceSet.add(insurance.insurance_plan.name))
+  settingdoctor.doc.insurances.map(insurance=>insuranceSet.add(insurance.insurance_plan.name));
   return (
-    <Container style={{marginLeft: 20}}>
+    <Container style={{marginLeft: 20, marginRight: 20}}>
     <AppBar>
           <Title align="center" >
             QuickDoc
@@ -59,8 +63,11 @@ const PageThree = ({pagestate,settingdoctor}) => {
     </AppBar>
     <div className={classes.bio}>
     <h3 style={{fontSize: 36, padding: '50 px'}}><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
+    <div style={{float: 'right'}}>
+      <CardMedia><img src={settingdoctor.doc.profile.image_url}></img></CardMedia>
+    </div>
     
-    <p style={{marginTop: 80}}>
+    <p style={{marginTop: 140}}>
       <h5 style={{fontSize: 18, fontStyle: 'italic', marginBottom: 10}}>Biography</h5>
       <Divider/>
       {settingdoctor.doc.profile.bio}
@@ -73,7 +80,16 @@ const PageThree = ({pagestate,settingdoctor}) => {
       <li>{insurance}</li>
       )}
     </p>
-    <Button style={{margin: 20, float:'right'}} className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
+
+    <p style={{marginTop:60}}>
+      <h5 style={{fontSize: 18, fontStyle: 'italic', marginBottom: 10}}>Practices</h5>
+      <Divider/>
+      {Array.from(practicesSet).map(practices =>
+      <li>{practices}</li>
+      )}
+    </p>
+
+    <Button style={{margin: 40, float:'right'}} className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
     </div>
     </Container>
   )
