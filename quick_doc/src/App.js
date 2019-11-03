@@ -30,7 +30,6 @@ import ReactStars from 'react-stars'
 
 
 import {FilterMenu} from './filter.js';
-import TextField from '@material-ui/core/TextField'
 
 const firebaseConfig = {
     apiKey: "AIzaSyCPlCnToFlfovuDUaAGesBUNLZw8DAxTnQ",
@@ -185,15 +184,22 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
 
   
   const [ratingval, setratingval] = React.useState(0);
+  const [reviewval, setreviewval] = React.useState('');
   const ratingChanged = (rating) => {
     setratingval(rating);
   }
   const submitrating = () =>{
     if (Object.keys(reviewstate.review).includes(docname)){
+      if(Object.keys(reviewstate.review[docname]).includes(1)){
+        db.child(docname).child(reviewstate.review[docname]["totalcount"]+1).update({rating: ratingval, review: reviewval})
+      } else {
+        db.child(docname).child(1).set({rating: ratingval, review: reviewval})
+      }
       db.child(docname).set({totalrating: reviewstate.review[docname]["totalrating"]+ratingval, totalcount: reviewstate.review[docname]["totalcount"]+1})
     }
     else{
       db.child(docname).set({totalrating: ratingval, totalcount: 1})
+      db.child(docname).child(1).set({rating: ratingval, review: reviewval})
     }
     setOpenrating(false);
   }
@@ -242,7 +248,8 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
             To subscribe to this website, please enter your email address here. We will send updates
             occasionally.
           </DialogContentText>
-          <ReactStars count={5} value={ratingval} onChange={ratingChanged} size={24} color2={'#ffd700'} />        
+          <ReactStars count={5} value={ratingval} onChange={ratingChanged} size={24} color2={'#ffd700'} />
+          <TextField value={reviewval} onChange={(e) => setreviewval(e.target.value)}>Review</TextField>        
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
