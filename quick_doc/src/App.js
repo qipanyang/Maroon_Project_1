@@ -57,10 +57,14 @@ const pageThreeStyles = makeStyles(theme => ({
  },
  button:{
    marginTop: 20,
+   float: 'right'
  },
  h3:{
    padding: '60 px',
    fontSize: 72,
+ },
+ image: {
+   align: "left"
  }
 }));
 
@@ -206,11 +210,11 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
     <div className={classes.bio}>
     <h3 style={{fontSize: 36, padding: '50 px', paddingTop: 40}}><strong>{settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name}</strong></h3>
     {Object.keys(reviewstate.review).includes(docname) ? <ReactStars  value={reviewstate.review[docname]["totalrating"]/reviewstate.review[docname]["totalcount"]} edit={false} /> : <Typography> No rating </Typography>}
-    <div style={{float: 'right'}}>
-      <CardMedia><img src={settingdoctor.doc.profile.image_url}></img></CardMedia>
+    <div style={{float: 'left', marginTop: 7}}>
+      <CardMedia><img src={settingdoctor.doc.profile.image_url} style={{width: 150, height: 175}}></img></CardMedia>
     </div>
     
-    <p style={{marginTop: 140}}>
+    <p style={{marginTop: 190}}>
       <h5 style={{fontSize: 18, fontStyle: 'italic', marginBottom: 10}}>Biography</h5>
       <Divider/>
       {settingdoctor.doc.profile.bio}
@@ -252,7 +256,7 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
           </Button>
         </DialogActions>
       </Dialog>
-    <Button style={{margin: 40, float:'right'}} className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
+    <Button style={{marginBottom: 10, float:'left'}} className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
     </div>
     </Container>
   )
