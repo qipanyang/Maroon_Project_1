@@ -190,12 +190,8 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
   }
   const submitrating = () =>{
     if (Object.keys(reviewstate.review).includes(docname)){
-      if(Object.keys(reviewstate.review[docname]).includes(1)){
-        db.child(docname).child(reviewstate.review[docname]["totalcount"]+1).update({rating: ratingval, review: reviewval})
-      } else {
-        db.child(docname).child(1).set({rating: ratingval, review: reviewval})
-      }
-      db.child(docname).set({totalrating: reviewstate.review[docname]["totalrating"]+ratingval, totalcount: reviewstate.review[docname]["totalcount"]+1})
+      db.child(docname).child(reviewstate.review[docname]["totalcount"]+1).set({rating: ratingval, review: reviewval})
+      db.child(docname).update({totalrating: reviewstate.review[docname]["totalrating"]+ratingval, totalcount: reviewstate.review[docname]["totalcount"]+1})
     }
     else{
       db.child(docname).set({totalrating: ratingval, totalcount: 1})
