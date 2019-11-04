@@ -223,22 +223,23 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
     setOpenrating(false);
   }
 
-  const getReviews = async(docname) =>{
+  const getReviews = (docname) =>{
     console.log("Running");
     var docReviews = [];
-    if (Object.keys(reviewstate.review).includes(docname)){
-      var query = db.child(docname).child("reviews").orderByKey();
-      await query.once('value').then(function(snapshot){
-        snapshot.forEach(function(childSnapshot){
-          docReviews.push(childSnapshot.val().review)
-        })
-      })
+    // if (Object.keys(reviewstate.review).includes(docname)){
+    //   var query = db.child(docname).child("reviews").orderByKey();
+    //   await query.once('value').then(function(snapshot){
+    //     snapshot.forEach(function(childSnapshot){
+    //       docReviews.push(childSnapshot.val().review)
+    //     })
+    //   })
     
-    }
-    console.log("inside")
+    // }
+    // console.log("inside")
+    // console.log(docReviews)
+    // console.log("bye")
+    Object.keys(reviewstate.review[docname]["reviews"]).map((key)=>{docReviews.push(reviewstate.review[docname]["reviews"][key])})
     console.log(docReviews)
-    console.log("bye")
-    
     return docReviews; 
   }
 
@@ -326,13 +327,14 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
         </IconButton>
       </CardActions>
       <Collapse in={openreview} timeout="auto" unmountOnExit>
-      {console.log("HELLLLLLLLLO")}
+      {/* {console.log("HELLLLLLLLLO")} */}
       {/* {console.log(reviewcomment)} */}
-      {getReviews(docname).then(function(response){
-        console.log(response);
-        console.log("that");
+      {/* {getReviews(docname).then(function(response){
+        // console.log(response);
+        // console.log("that");
         response.map(review => <CardContent>{review}</CardContent>)
-      })}
+      })} */}
+      {getReviews(docname).map(review=><CardContent>{review.review}</CardContent>)}
       {/* {getReviews(docname).then(function(response) {
         response.map(review => <CardContent> {review}</CardContent>)
         })} */}
