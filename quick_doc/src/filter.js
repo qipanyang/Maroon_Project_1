@@ -126,6 +126,9 @@ const useStyles = makeStyles(theme => ({
         marginLeft: 3,
         marginBottom: -3,
       },
+      locationheader: {
+        marginTop: 100
+      }
   }));
 
 const ITEM_HEIGHT = 48;
@@ -141,7 +144,6 @@ const MenuProps = {
 
 const doctorCardStyles = makeStyles(theme => ({
   grid: {
-    marginTop: 75,
     paddingLeft: 60,
     paddingRight: 60,
     marginLeft: 245,
@@ -194,7 +196,7 @@ const DoctorCards = ({doctors, settingdoctor, pagestate, reviewstate}) => {
     )
 }
 
-export const FilterMenu =({pagestate,jsonstate,settingdoctor,reviewstate})=>{
+export const FilterMenu =({pagestate,jsonstate,settingdoctor,reviewstate, addressprop})=>{
 
 // db.child("doctors").child("Nirali Patel").once('value').then(function(snapshot) {
 //   const val = snapshot.val() && snapshot.val();
@@ -405,6 +407,7 @@ const doctorSelector = () =>{
         </List>
         <Divider />
       </Drawer>
+      <Typography variant="h6" className={classes.locationheader}>Doctors near <strong>{addressprop.address}</strong>:</Typography>
       <main
         className={clsx(classes.content, {
           [classes.contentShift]: open,

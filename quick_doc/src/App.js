@@ -121,7 +121,7 @@ const pageOneStyles = makeStyles(theme => ({
 }));
 
 
-const Pageone = ({pagestate,jsonstate}) => {
+const Pageone = ({pagestate,jsonstate,addressprop}) => {
   const switch_page = () => {
     pagestate.setpage(2)
   }
@@ -161,7 +161,8 @@ const Pageone = ({pagestate,jsonstate}) => {
           onPlaceSelected={(place) => {
             var lat = place.geometry.location.lat().toString();
             var lng = place.geometry.location.lng().toString();
-            fetchjson(lat,lng)
+            addressprop.setaddress(place.formatted_address)
+            fetchjson(lat,lng);
           }}
           types={[]}
           componentRestrictions={{country: "usa"}}
@@ -274,6 +275,7 @@ const App =() => {
   const [json, setjson] = React.useState([]);
   const [doc,setdoc] = React.useState('');
   const [review, setreview] = React.useState({});
+  const [address, setaddress] = useState('');
 
   useEffect(() => {
     const handleData = snap => {
@@ -286,13 +288,14 @@ const App =() => {
 
   if (page === 1){
     return (
-        <Pageone pagestate = {{page, setpage}} jsonstate={{json,setjson}} className={classes.pageone}/>
+        <Pageone pagestate = {{page, setpage}} jsonstate={{json,setjson}} addressprop={{address, setaddress}} className={classes.pageone} />
     );
   }
   else if (page == 2) {
     return (
       <Container>
-        <FilterMenu pagestate = {{page,setpage}} jsonstate={{json,setjson}} settingdoctor = {{doc,setdoc}} reviewstate = {{review, setreview}}/>
+        {console.log(address)}
+        <FilterMenu pagestate = {{page,setpage}} jsonstate={{json,setjson}} settingdoctor = {{doc,setdoc}} reviewstate = {{review, setreview}} addressprop={{address, setaddress}}/>
       </Container>
     );
   }
