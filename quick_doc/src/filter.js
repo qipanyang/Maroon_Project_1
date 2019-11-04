@@ -127,7 +127,8 @@ const useStyles = makeStyles(theme => ({
         marginBottom: -3,
       },
       locationheader: {
-        marginTop: 100
+        marginTop: 100,
+        marginBottom: 10
       }
   }));
 
@@ -144,6 +145,7 @@ const MenuProps = {
 
 const doctorCardStyles = makeStyles(theme => ({
   grid: {
+    marginTop: 7,   
     paddingLeft: 60,
     paddingRight: 60,
     marginLeft: 245,
@@ -408,6 +410,7 @@ const doctorSelector = () =>{
         <Divider />
       </Drawer>
       <Typography variant="h6" className={classes.locationheader}>Doctors near <strong>{addressprop.address}</strong>:</Typography>
+      <Divider />
       <main
         className={clsx(classes.content, {
           [classes.contentShift]: open,
