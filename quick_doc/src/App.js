@@ -240,12 +240,8 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
         Review the doctor
       </Button>
       <Dialog open={openrating} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+        <DialogTitle id="form-dialog-title">Rate the doctor</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here. We will send updates
-            occasionally.
-          </DialogContentText>
           <ReactStars count={5} value={ratingval} onChange={ratingChanged} size={24} color2={'#ffd700'} />        
         </DialogContent>
         <DialogActions>
