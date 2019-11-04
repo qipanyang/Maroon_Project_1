@@ -13,7 +13,6 @@ import Typography from '@material-ui/core/Typography';
 
 import Background from './Images/background.jpg';
 import Paper from '@material-ui/core/Paper';
-
 import {FormControl, CardHeader, CardContent, CardMedia} from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -23,6 +22,12 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 // import Rater from 'react-rater'
 import ReactStars from 'react-stars'
+import clsx from 'clsx';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import Collapse from '@material-ui/core/Collapse';
+import IconButton from '@material-ui/core/IconButton';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 
 
@@ -61,7 +66,17 @@ const pageThreeStyles = makeStyles(theme => ({
  h3:{
    padding: '60 px',
    fontSize: 72,
- }
+ },
+ expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  },
+expandOpen: {
+    transform: 'rotate(180deg)',
+  },
 }));
 
 
@@ -182,13 +197,8 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
     setOpenrating(false);
   };
 
-  const handleOpenReview = () =>{
-    setOpenreview(true);
-  }
-
-  const handleCloseReview =() =>{
-    setOpenreview(false)
-
+  const handleReviewClick= () =>{
+    setOpenreview(!openreview);
   }
 
   const docname = settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name;
@@ -210,6 +220,27 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
     }
     setOpenrating(false);
   }
+
+  const getReviews = (docname) =>{
+    var docReviews = [];
+    if (Object.keys(reviewstate.review).includes(docname)){
+      var query = db.child(docname).child("reviews").orderByKey();
+      query.once('value').then(function(snapshot){
+        snapshot.forEach(function(childSnapshot){
+          docReviews.push(childSnapshot.val().review)
+        })
+      })
+    
+    }
+    return docReviews; 
+  }
+
+  var docReviews = getReviews(docname);
+  console.log(docReviews)
+  console.log(docReviews.length)
+
+
+
 
   var practicesSet = new Set();
   settingdoctor.doc.practices.map(practices=>practicesSet.add(practices.name));
@@ -248,28 +279,47 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
     <Button className={classes.button} variant="contained"  onClick={handleClickOpen}>
         Review the doctor
     </Button>
-    <Button className={classes.button} variant="contained"  onClick={handleOpenReview}>
-      Show doctor's review(s)
-    </Button>
-      <Dialog open={openrating} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here. We will send updates
-            occasionally.
-          </DialogContentText>
-          <ReactStars count={5} value={ratingval} onChange={ratingChanged} size={24} color2={'#ffd700'} />
-          <TextField value={reviewval} onChange={(e) => setreviewval(e.target.value)}>Review</TextField>        
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={submitrating} color="primary">
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
+    <Dialog open={openrating} onClose={handleClose} aria-labelledby="form-dialog-title">
+      <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          To subscribe to this website, please enter your email address here. We will send updates
+          occasionally.
+        </DialogContentText>
+        <ReactStars count={5} value={ratingval} onChange={ratingChanged} size={24} color2={'#ffd700'} />
+        <TextField value={reviewval} onChange={(e) => setreviewval(e.target.value)}>Review</TextField>        
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={submitrating} color="primary">
+          Submit
+        </Button>
+      </DialogActions>
+    </Dialog>
+    <Card>
+      <CardContent>The doctor's review(s)</CardContent>
+    <CardActions disableSpacing>
+        <IconButton
+          className={clsx(classes.expand, {
+            [classes.expandOpen]: openreview,
+          })}
+          onClick={handleReviewClick}
+          aria-expanded={openreview}
+          aria-label="show more"
+        >
+          <ExpandMoreIcon />
+        </IconButton>
+      </CardActions>
+      <Collapse in={openreview} timeout="auto" unmountOnExit>
+      {console.log(docReviews[0])}
+        {docReviews.map(review=>
+          <CardContent>
+            {review}
+          </CardContent>)}
+      </Collapse>
+      </Card>
     <Button style={{margin: 40, float:'right'}} className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
     </div>
     </Container>
