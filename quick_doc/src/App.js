@@ -190,6 +190,7 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
   const classes = pageThreeStyles();
   const [openrating, setOpenrating] = React.useState(false);
   const [openreview, setOpenreview] = React.useState(false);
+  const [commentstate, setCommentstate] = React.useState([]);
   const handleClickOpen = () => {
     setOpenrating(true);
   };
@@ -206,6 +207,7 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
   
   const [ratingval, setratingval] = React.useState(0);
   const [reviewval, setreviewval] = React.useState('');
+  const [reviewcomment, setreviewcomment] = React.useState([]);
   const ratingChanged = (rating) => {
     setratingval(rating);
   }
@@ -221,26 +223,35 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
     setOpenrating(false);
   }
 
-  const getReviews = (docname) =>{
+  const getReviews = async(docname) =>{
+    console.log("Running");
     var docReviews = [];
     if (Object.keys(reviewstate.review).includes(docname)){
       var query = db.child(docname).child("reviews").orderByKey();
-      query.once('value').then(function(snapshot){
+      await query.once('value').then(function(snapshot){
         snapshot.forEach(function(childSnapshot){
           docReviews.push(childSnapshot.val().review)
         })
       })
     
     }
+    console.log("inside")
+    console.log(docReviews)
+    console.log("bye")
+    
     return docReviews; 
   }
 
-  var docReviews = getReviews(docname);
-  console.log(docReviews)
-  console.log(docReviews.length)
 
-
-
+  // getReviews(docname).then(result => )
+  // console.log(commentstate)
+  // console.log("that ")
+  // commentstate.setcommentState(getReviews(docname))
+  
+  // console.log(docReviews)
+  // console.log(docReviews.length)
+  // console.log("hi here")
+  // console.log(Object.keys(reviewstate.review).includes(docname) ? reviewstate.review[docname]["reviews"] : "No comments");
 
   var practicesSet = new Set();
   settingdoctor.doc.practices.map(practices=>practicesSet.add(practices.name));
@@ -283,23 +294,25 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
       <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          To subscribe to this website, please enter your email address here. We will send updates
-          occasionally.
+          To review this doctor, click a star rating. You may also include a review comment in the field below.
         </DialogContentText>
         <ReactStars count={5} value={ratingval} onChange={ratingChanged} size={24} color2={'#ffd700'} />
-        <TextField value={reviewval} onChange={(e) => setreviewval(e.target.value)}>Review</TextField>        
+        <TextField value={reviewval} onChange={(e) => setreviewval(e.target.value)}>Review</TextField>
+        <h5 style={{color: 'gray', fontSize: '8', fontStyle: 'italic'}}>Your Review</h5>       
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary">
           Cancel
-        </Button>
+        </Button> 
         <Button onClick={submitrating} color="primary">
           Submit
         </Button>
       </DialogActions>
     </Dialog>
     <Card>
-      <CardContent>The doctor's review(s)</CardContent>
+      <CardContent>
+        Reviews
+        </CardContent>
     <CardActions disableSpacing>
         <IconButton
           className={clsx(classes.expand, {
@@ -313,11 +326,22 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
         </IconButton>
       </CardActions>
       <Collapse in={openreview} timeout="auto" unmountOnExit>
-      {console.log(docReviews[0])}
-        {docReviews.map(review=>
+      {console.log("HELLLLLLLLLO")}
+      {/* {console.log(reviewcomment)} */}
+      {getReviews(docname).then(function(response){
+        console.log(response);
+        console.log("that");
+        response.map(review => <CardContent>{review}</CardContent>)
+      })}
+      {/* {getReviews(docname).then(function(response) {
+        response.map(review => <CardContent> {review}</CardContent>)
+        })} */}
+      {/* {reviewcomment.map(review=>
+      <CardContent> {review}</CardContent>)} */}
+      {/* {docReviews.map(review=>
           <CardContent>
             {review}
-          </CardContent>)}
+          </CardContent>)} */}
       </Collapse>
       </Card>
     <Button style={{margin: 40, float:'right'}} className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
