@@ -174,12 +174,23 @@ const Pageone = ({pagestate,jsonstate}) => {
 const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
   const classes = pageThreeStyles();
   const [openrating, setOpenrating] = React.useState(false);
+  const [openreview, setOpenreview] = React.useState(false);
   const handleClickOpen = () => {
     setOpenrating(true);
   };
   const handleClose = () => {
     setOpenrating(false);
   };
+
+  const handleOpenReview = () =>{
+    setOpenreview(true);
+  }
+
+  const handleCloseReview =() =>{
+    setOpenreview(false)
+
+  }
+
   const docname = settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name;
 
   
@@ -190,12 +201,12 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
   }
   const submitrating = () =>{
     if (Object.keys(reviewstate.review).includes(docname)){
-      db.child(docname).child(reviewstate.review[docname]["totalcount"]+1).set({rating: ratingval, review: reviewval})
+      db.child(docname).child("reviews").child(reviewstate.review[docname]["totalcount"]+1).set({rating: ratingval, review: reviewval})
       db.child(docname).update({totalrating: reviewstate.review[docname]["totalrating"]+ratingval, totalcount: reviewstate.review[docname]["totalcount"]+1})
     }
     else{
       db.child(docname).set({totalrating: ratingval, totalcount: 1})
-      db.child(docname).child(1).set({rating: ratingval, review: reviewval})
+      db.child(docname).child("reviews").child(1).set({rating: ratingval, review: reviewval})
     }
     setOpenrating(false);
   }
@@ -236,7 +247,10 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
     </p>
     <Button className={classes.button} variant="contained"  onClick={handleClickOpen}>
         Review the doctor
-      </Button>
+    </Button>
+    <Button className={classes.button} variant="contained"  onClick={handleOpenReview}>
+      Show doctor's review(s)
+    </Button>
       <Dialog open={openrating} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
         <DialogContent>
