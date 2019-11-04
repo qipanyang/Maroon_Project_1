@@ -228,9 +228,13 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
   const getReviews = (docname) =>{
     console.log("Running");
     var docReviews = [];
-    Object.keys(reviewstate.review[docname]["reviews"]).map((key)=>{docReviews.push(reviewstate.review[docname]["reviews"][key])})
-    console.log(docReviews)
+    if (Object.keys(reviewstate.review).includes(docname)){
+      Object.keys(reviewstate.review[docname]["reviews"]).map((key)=>{docReviews.push(reviewstate.review[docname]["reviews"][key])})
+      console.log(docReviews)
+      
+    }
     return docReviews; 
+    
   }
 
   var practicesSet = new Set();
