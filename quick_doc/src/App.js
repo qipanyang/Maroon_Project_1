@@ -226,33 +226,10 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
   const getReviews = (docname) =>{
     console.log("Running");
     var docReviews = [];
-    // if (Object.keys(reviewstate.review).includes(docname)){
-    //   var query = db.child(docname).child("reviews").orderByKey();
-    //   await query.once('value').then(function(snapshot){
-    //     snapshot.forEach(function(childSnapshot){
-    //       docReviews.push(childSnapshot.val().review)
-    //     })
-    //   })
-    
-    // }
-    // console.log("inside")
-    // console.log(docReviews)
-    // console.log("bye")
     Object.keys(reviewstate.review[docname]["reviews"]).map((key)=>{docReviews.push(reviewstate.review[docname]["reviews"][key])})
     console.log(docReviews)
     return docReviews; 
   }
-
-
-  // getReviews(docname).then(result => )
-  // console.log(commentstate)
-  // console.log("that ")
-  // commentstate.setcommentState(getReviews(docname))
-  
-  // console.log(docReviews)
-  // console.log(docReviews.length)
-  // console.log("hi here")
-  // console.log(Object.keys(reviewstate.review).includes(docname) ? reviewstate.review[docname]["reviews"] : "No comments");
 
   var practicesSet = new Set();
   settingdoctor.doc.practices.map(practices=>practicesSet.add(practices.name));
@@ -327,23 +304,7 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
         </IconButton>
       </CardActions>
       <Collapse in={openreview} timeout="auto" unmountOnExit>
-      {/* {console.log("HELLLLLLLLLO")} */}
-      {/* {console.log(reviewcomment)} */}
-      {/* {getReviews(docname).then(function(response){
-        // console.log(response);
-        // console.log("that");
-        response.map(review => <CardContent>{review}</CardContent>)
-      })} */}
-      {getReviews(docname).map(review=><CardContent>{review.review}</CardContent>)}
-      {/* {getReviews(docname).then(function(response) {
-        response.map(review => <CardContent> {review}</CardContent>)
-        })} */}
-      {/* {reviewcomment.map(review=>
-      <CardContent> {review}</CardContent>)} */}
-      {/* {docReviews.map(review=>
-          <CardContent>
-            {review}
-          </CardContent>)} */}
+      {getReviews(docname).map((review, i)=><div><p style={{paddingLeft: 15, paddingTop: 10, fontStyle: 'italic'}}>Review {i + 1}:</p><CardContent>{review.review}</CardContent><Divider/></div>)}
       </Collapse>
       </Card>
     <Button style={{margin: 40, float:'right'}} className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
