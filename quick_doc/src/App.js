@@ -13,7 +13,6 @@ import Typography from '@material-ui/core/Typography';
 
 import Background from './Images/background.jpg';
 import Paper from '@material-ui/core/Paper';
-
 import {FormControl, CardHeader, CardContent, CardMedia} from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -23,6 +22,12 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 // import Rater from 'react-rater'
 import ReactStars from 'react-stars'
+import clsx from 'clsx';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import Collapse from '@material-ui/core/Collapse';
+import IconButton from '@material-ui/core/IconButton';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 
 
@@ -63,9 +68,16 @@ const pageThreeStyles = makeStyles(theme => ({
    padding: '60 px',
    fontSize: 72,
  },
- image: {
-   align: "left"
- }
+ expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  },
+expandOpen: {
+    transform: 'rotate(180deg)',
+  },
 }));
 
 
@@ -179,27 +191,46 @@ const Pageone = ({pagestate,jsonstate,addressprop}) => {
 const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
   const classes = pageThreeStyles();
   const [openrating, setOpenrating] = React.useState(false);
+  const [openreview, setOpenreview] = React.useState(false);
+  const [commentstate, setCommentstate] = React.useState([]);
   const handleClickOpen = () => {
     setOpenrating(true);
   };
   const handleClose = () => {
     setOpenrating(false);
   };
+
+  const handleReviewClick= () =>{
+    setOpenreview(!openreview);
+  }
+
   const docname = settingdoctor.doc.profile.first_name + " " + settingdoctor.doc.profile.last_name;
 
   
   const [ratingval, setratingval] = React.useState(0);
+  const [reviewval, setreviewval] = React.useState('');
+  const [reviewcomment, setreviewcomment] = React.useState([]);
   const ratingChanged = (rating) => {
     setratingval(rating);
   }
   const submitrating = () =>{
     if (Object.keys(reviewstate.review).includes(docname)){
-      db.child(docname).set({totalrating: reviewstate.review[docname]["totalrating"]+ratingval, totalcount: reviewstate.review[docname]["totalcount"]+1})
+      db.child(docname).child("reviews").child(reviewstate.review[docname]["totalcount"]+1).set({rating: ratingval, review: reviewval})
+      db.child(docname).update({totalrating: reviewstate.review[docname]["totalrating"]+ratingval, totalcount: reviewstate.review[docname]["totalcount"]+1})
     }
     else{
       db.child(docname).set({totalrating: ratingval, totalcount: 1})
+      db.child(docname).child("reviews").child(1).set({rating: ratingval, review: reviewval})
     }
     setOpenrating(false);
+  }
+
+  const getReviews = (docname) =>{
+    console.log("Running");
+    var docReviews = [];
+    Object.keys(reviewstate.review[docname]["reviews"]).map((key)=>{docReviews.push(reviewstate.review[docname]["reviews"][key])})
+    console.log(docReviews)
+    return docReviews; 
   }
 
   var practicesSet = new Set();
@@ -238,22 +269,48 @@ const PageThree = ({pagestate,settingdoctor,reviewstate}) => {
     </p>
     <Button className={classes.button} variant="contained"  onClick={handleClickOpen}>
         Review the doctor
-      </Button>
-      <Dialog open={openrating} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Rate the doctor</DialogTitle>
-        <DialogContent>
-          <ReactStars count={5} value={ratingval} onChange={ratingChanged} size={24} color2={'#ffd700'} />        
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={submitrating} color="primary">
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-    <Button style={{marginBottom: 10, float:'left'}} className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
+    </Button>
+    <Dialog open={openrating} onClose={handleClose} aria-labelledby="form-dialog-title">
+      <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          To review this doctor, click a star rating. You may also include a review comment in the field below.
+        </DialogContentText>
+        <ReactStars count={5} value={ratingval} onChange={ratingChanged} size={24} color2={'#ffd700'} />
+        <TextField value={reviewval} onChange={(e) => setreviewval(e.target.value)}>Review</TextField>
+        <h5 style={{color: 'gray', fontSize: '8', fontStyle: 'italic'}}>Your Review</h5>       
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          Cancel
+        </Button> 
+        <Button onClick={submitrating} color="primary">
+          Submit
+        </Button>
+      </DialogActions>
+    </Dialog>
+    <Card style={{marginTop: 100}}>
+      <CardContent>
+        Reviews
+        </CardContent>
+    <CardActions disableSpacing>
+        <IconButton
+          className={clsx(classes.expand, {
+            [classes.expandOpen]: openreview,
+          })}
+          onClick={handleReviewClick}
+          aria-expanded={openreview}
+          aria-label="show more"
+        >
+          <ExpandMoreIcon />
+        </IconButton>
+      </CardActions>
+      <Collapse in={openreview} timeout="auto" unmountOnExit>
+      {getReviews(docname).map((review, i)=><div><p style={{paddingLeft: 15, paddingTop: 10, fontStyle: 'italic'}}>
+        Review {i + 1}:</p><CardContent>{review.review}</CardContent><Divider/></div>)}
+      </Collapse>
+      </Card>
+    <Button style={{margin: 40, float:'right'}} className={classes.button} variant="contained" color="primary" align="center" size="large" onClick={function(event){pagestate.setpage(2)}}>go back</Button>
     </div>
     </Container>
   )
@@ -280,6 +337,7 @@ const App =() => {
     db.on('value', handleData, error => alert(error));
     return () => { db.off('value', handleData); };
   }, []);
+
 
 
   if (page === 1){
