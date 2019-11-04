@@ -145,7 +145,7 @@ const MenuProps = {
 
 const doctorCardStyles = makeStyles(theme => ({
   grid: {
-    marginTop: 7,
+    marginTop: 7,   
     paddingLeft: 60,
     paddingRight: 60,
     marginLeft: 245,
